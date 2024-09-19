@@ -1,10 +1,20 @@
 package chess;
 
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
-public class KingMovementRule implements PieceMovesCalculator{
+public class KingMovementRule extends BaseMovementFunctionality {
     @Override
-    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
-        return new ArrayList<>();
+    public Set<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
+        Set<ChessMove> moves = new HashSet<ChessMove>();
+        calculateMoves(board, position, -1, -1, moves, false);
+        calculateMoves(board, position, 0, -1, moves, false);
+        calculateMoves(board, position, 1, -1, moves, false);
+        calculateMoves(board, position, 1, 0, moves, false);
+        calculateMoves(board, position, 1, 1, moves, false);
+        calculateMoves(board, position, 0, 1, moves, false);
+        calculateMoves(board, position, -1, 1, moves, false);
+        calculateMoves(board, position, -1, 0, moves, false);
+        return moves;
     }
 }

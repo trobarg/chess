@@ -1,10 +1,14 @@
 package chess;
 
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
-public class PawnMovementRule implements PieceMovesCalculator{
+public class PawnMovementRule extends BaseMovementFunctionality {
     @Override
-    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
-        return new ArrayList<>();
+    public Set<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
+        /*
+        if()
+
+        */
     }
 }

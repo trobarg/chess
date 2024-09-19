@@ -1,7 +1,7 @@
 package chess;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 public interface MovementRule {
-    ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition position);
+    Set<ChessMove> pieceMoves(ChessBoard board, ChessPosition position);
 }
