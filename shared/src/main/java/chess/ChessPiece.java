@@ -56,7 +56,7 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        String rep=switch (type) {
+        String rep = switch (type) {
             case KING -> "K";
             case QUEEN -> "Q";
             case ROOK -> "R";
@@ -72,8 +72,9 @@ public class ChessPiece {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        else if (!(o instanceof ChessPiece other)) return false;
+        else if (!(o instanceof ChessPiece)) return false;
         else {
+            ChessPiece other = (ChessPiece) o;
             return this.getTeamColor() == other.getTeamColor() && this.getPieceType() == other.getPieceType();
         }
     }

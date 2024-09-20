@@ -9,6 +9,8 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+private final ChessBoard board = new ChessBoard();
+private TeamColor currentTeamTurn = TeamColor.WHITE;
 
     public ChessGame() {
 
@@ -18,7 +20,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return currentTeamTurn;
     }
 
     /**
@@ -27,7 +29,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        currentTeamTurn = team;
     }
 
     /**
@@ -46,7 +48,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (board.getPiece(startPosition) != null) {
+            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+        }
+        else return null;
     }
 
     /**
@@ -95,7 +100,7 @@ public class ChessGame {
      *
      * @param board the new board to use
      */
-    public void setBoard(ChessBoard board) {
+    public void setBoard(ChessBoard board) { //perform deep copy? shallow copy?
         throw new RuntimeException("Not implemented");
     }
 
@@ -105,6 +110,27 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
+    }
+    @Override
+    public String toString() {
+        return board.toString() + " " + currentTeamTurn;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        else if (!(o instanceof ChessGame)) return false;
+        else {
+            ChessGame other = (ChessGame) o;
+            return this.board.equals(other.board) && this.currentTeamTurn.equals(other.currentTeamTurn);
+        }
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + board.hashCode();
+        result = prime * result + currentTeamTurn.hashCode();
+        return result;
     }
 }

@@ -61,8 +61,9 @@ public class ChessMove {
     public boolean equals(Object o) {
         boolean PromotionMatch = false;
         if (this == o) return true;
-        else if (!(o instanceof ChessMove other)) return false;
+        else if (!(o instanceof ChessMove)) return false;
         else {
+            ChessMove other = (ChessMove) o;
             if (this.promotionType == null || other.promotionType == null) {
                 if (this.promotionType == null && other.promotionType == null) {
                     PromotionMatch = true;
