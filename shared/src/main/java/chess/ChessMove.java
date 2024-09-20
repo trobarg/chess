@@ -50,7 +50,12 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return startPosition.toString() + " to " + endPosition.toString();
+        if (promotionType != null) {
+            return startPosition.toString() + " to " + endPosition.toString() + " " + promotionType;
+        }
+        else {
+            return this.startPosition.toString() + " to " + this.endPosition.toString();
+        }
     }
     @Override
     public boolean equals(Object o) {
@@ -63,7 +68,7 @@ public class ChessMove {
                     PromotionMatch = true;
                 }
             }
-            else if (!this.promotionType.equals(other.promotionType)) {
+            else if (this.promotionType.equals(other.promotionType)) {
                 PromotionMatch = true;
             }
             return this.startPosition.equals(other.startPosition) && this.endPosition.equals(other.endPosition) && PromotionMatch;

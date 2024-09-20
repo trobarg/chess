@@ -15,7 +15,6 @@ public class PawnMovementRule extends BaseMovementFunctionality {
             }
             else if (position.getRow() == 7) {
                 promotionMove = true;
-                calculateMoves(board, position, 1, 0, moves, false, promotionMove);
             }
             if (position.getColumn() > 1 && board.getPiece(new ChessPosition(position.getRow() + 1, position.getColumn() - 1)) != null &&
                     board.getPiece(new ChessPosition(position.getRow() + 1, position.getColumn() - 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
@@ -36,7 +35,6 @@ public class PawnMovementRule extends BaseMovementFunctionality {
             }
             else if (position.getRow() == 2) {
                 promotionMove = true;
-                calculateMoves(board, position, -1, 0, moves, false, promotionMove);
             }
             if (position.getColumn() > 1 && board.getPiece(new ChessPosition(position.getRow() - 1, position.getColumn() - 1)) != null &&
                     board.getPiece(new ChessPosition(position.getRow() - 1, position.getColumn() - 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
