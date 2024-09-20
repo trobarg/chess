@@ -14,7 +14,7 @@ public class Rules {
         rules.put(ChessPiece.PieceType.PAWN, new PawnMovementRule());
     }
 
-    static public MovementRule pieceRule(ChessPiece.PieceType type) {
+    static public MovementRule getRule(ChessPiece.PieceType type) {
         return rules.get(type);
     }
 }

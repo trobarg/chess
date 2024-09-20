@@ -8,20 +8,20 @@ package chess;
  */
 public class ChessPosition {
 
-  private final int row;
-  private final int col;
+    private final int row;
+    private final int col;
 
-  public ChessPosition(int row, int col) {
-    this.row=row;
-    this.col=col;
-  }
+    public ChessPosition(int row, int col) {
+        this.row=row;
+        this.col=col;
+    }
 
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
      */
     public int getRow() {
-      return row;
+        return row;
     }
 
     /**
@@ -29,6 +29,27 @@ public class ChessPosition {
      * 1 codes for the left column
      */
     public int getColumn() {
-      return col;
+        return col;
+    }
+
+    @Override
+    public String toString() {
+        return row+","+col;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        else if (!(o instanceof ChessPosition other)) return false;
+        else {
+            return this.row==other.row && this.col==other.col;
+        }
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.row;
+        result = prime * result + this.col;
+        return result;
     }
 }

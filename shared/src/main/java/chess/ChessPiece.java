@@ -53,4 +53,25 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         return Rules.getRule(type).pieceMoves(board, position);
     }
+
+    @Override
+    public String toString() {
+        return pieceColor.toString() + " " + type.toString();
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        else if (!(o instanceof ChessPiece other)) return false;
+        else {
+            return this.getTeamColor() == other.getTeamColor() && this.getPieceType() == other.getPieceType();
+        }
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.pieceColor == null) ? 0 : this.pieceColor.hashCode());
+        result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
+        return result;
+    }
 }

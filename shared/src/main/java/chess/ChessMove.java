@@ -46,4 +46,26 @@ public class ChessMove {
     public ChessPiece.PieceType getPromotionPiece() {
         return promotionType;
     }
+
+    @Override
+    public String toString() {
+        return startPosition.toString() + " to " + endPosition.toString();
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        else if (!(o instanceof ChessMove other)) return false;
+        else {
+            return this.startPosition.equals(other.startPosition) && this.endPosition.equals(other.endPosition);
+        }
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.startPosition == null) ? 0 : this.startPosition.hashCode());
+        result = prime * result + ((this.endPosition == null) ? 0 : this.endPosition.hashCode());
+        result = prime * result + ((this.promotionType == null) ? 0 : this.promotionType.hashCode());
+        return result;
+    }
 }
