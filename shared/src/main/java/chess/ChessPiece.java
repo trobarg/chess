@@ -12,7 +12,7 @@ public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
     }
@@ -56,7 +56,18 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        return pieceColor.toString() + " " + type.toString();
+        String rep=switch (type) {
+            case KING -> "K";
+            case QUEEN -> "Q";
+            case ROOK -> "R";
+            case BISHOP -> "B";
+            case KNIGHT -> "N";
+            case PAWN -> "P";
+        };
+        if (pieceColor == ChessGame.TeamColor.BLACK) {
+            rep = rep.toLowerCase();
+        }
+        return rep;
     }
     @Override
     public boolean equals(Object o) {

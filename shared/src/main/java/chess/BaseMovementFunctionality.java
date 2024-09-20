@@ -3,7 +3,7 @@ package chess;
 import java.util.Set;
 
 public abstract class BaseMovementFunctionality implements MovementRule {
-    public void calculateMoves(ChessBoard board, ChessPosition position, int rowInc, int colInc, Set<ChessMove> moves, boolean allowDistance) {
+    public void calculateMoves(ChessBoard board, ChessPosition position, int rowInc, int colInc, Set<ChessMove> moves, boolean allowDistance, boolean promotion) {
         int rowIncTotal = rowInc;
         int colIncTotal = colInc;
         ChessPosition newPosition = new ChessPosition(position.getRow() + rowIncTotal, position.getColumn() + colIncTotal);
@@ -12,7 +12,15 @@ public abstract class BaseMovementFunctionality implements MovementRule {
                 break;
             }
             else {
-                moves.add(new ChessMove(position, newPosition, null));
+                if (promotion) {
+                    moves.add(new ChessMove(position, newPosition, ChessPiece.PieceType.QUEEN));
+                    moves.add(new ChessMove(position, newPosition, ChessPiece.PieceType.ROOK));
+                    moves.add(new ChessMove(position, newPosition, ChessPiece.PieceType.BISHOP));
+                    moves.add(new ChessMove(position, newPosition, ChessPiece.PieceType.KNIGHT));
+                }
+                else {
+                    moves.add(new ChessMove(position, newPosition, null));
+                }
             }
             if ((board.getPiece(newPosition) != null && board.getPiece(newPosition).getTeamColor() != board.getPiece(position).getTeamColor()) || !allowDistance) {
                 break;

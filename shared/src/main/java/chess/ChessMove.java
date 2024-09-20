@@ -11,12 +11,13 @@ public class ChessMove {
     private final ChessPosition endPosition;
     private final ChessPiece.PieceType promotionType;
 
+    /* overloaded constructor not needed
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionType = null;
     }
-
+    */
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionType) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
@@ -53,10 +54,19 @@ public class ChessMove {
     }
     @Override
     public boolean equals(Object o) {
+        boolean PromotionMatch = false;
         if (this == o) return true;
         else if (!(o instanceof ChessMove other)) return false;
         else {
-            return this.startPosition.equals(other.startPosition) && this.endPosition.equals(other.endPosition);
+            if (this.promotionType == null || other.promotionType == null) {
+                if (this.promotionType == null && other.promotionType == null) {
+                    PromotionMatch = true;
+                }
+            }
+            else if (!this.promotionType.equals(other.promotionType)) {
+                PromotionMatch = true;
+            }
+            return this.startPosition.equals(other.startPosition) && this.endPosition.equals(other.endPosition) && PromotionMatch;
         }
     }
     @Override
