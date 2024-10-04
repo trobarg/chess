@@ -14,14 +14,6 @@ public class ChessBoard {
         
     }
 
-    public ChessBoard(ChessBoard other) { //might not use in validMoves() functionality
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.board[i][j] =  other.board[i][j]; //shouldn't work, since board is a private member variable
-            }
-        }
-    }
-
     /**
      * Adds a chess piece to the chessboard
      *

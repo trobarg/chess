@@ -76,7 +76,10 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if (board.getPiece(move.getStartPosition()) != null) {
-            ChessPiece piece=board.getPiece(move.getStartPosition());
+            ChessPiece piece = board.getPiece(move.getStartPosition());
+            if (piece.getTeamColor() != currentTeamTurn) {
+                throw new InvalidMoveException();
+            }
             boolean matchingMove = false;
             Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
             for (ChessMove validMove : validMoves) {
@@ -179,7 +182,7 @@ public class ChessGame {
         else {
             for (int i = 1; i < 9; i++) {
                 for (int j = 1; j < 9; j++) {
-                    ChessPosition currentPosition=new ChessPosition(i, j);
+                    ChessPosition currentPosition = new ChessPosition(i, j);
                     if (board.getPiece(currentPosition) != null &&
                             board.getPiece(currentPosition).getTeamColor() == teamColor) {
                         if (!validMoves(currentPosition).isEmpty()) {
@@ -226,17 +229,17 @@ public class ChessGame {
         if (this == o) return true;
         else if (!(o instanceof ChessGame)) return false;
         else {
-            ChessGame other=(ChessGame) o;
+            ChessGame other = (ChessGame) o;
             return this.board.equals(other.board) && this.currentTeamTurn.equals(other.currentTeamTurn);
         }
     }
 
     @Override
     public int hashCode() {
-        final int prime=31;
-        int result=1;
-        result=prime * result + board.hashCode();
-        result=prime * result + currentTeamTurn.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + board.hashCode();
+        result = prime * result + currentTeamTurn.hashCode();
         return result;
     }
 }
