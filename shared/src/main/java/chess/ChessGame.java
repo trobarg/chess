@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -71,7 +72,36 @@ private TeamColor currentTeamTurn = TeamColor.WHITE;
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = null;
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                if (board.getPiece(new ChessPosition(i,j)) != null &&
+                board.getPiece(new ChessPosition(i, j)).getPieceType().equals(ChessPiece.PieceType.KING) &&
+                board.getPiece(new ChessPosition(i, j)).getTeamColor().equals(teamColor)) {
+                    kingPosition = new ChessPosition(i,j);
+                    break;
+                }
+            }
+        }
+        if (kingPosition == null) {
+            return false;
+        }
+        boolean check = false;
+        for (int i = 1; i < 9; i++) {
+            for (int j=1; j < 9; j++) {
+                if (board.getPiece(new ChessPosition(i,j)) != null &&
+                    board.getPiece(new ChessPosition(i,j)).getTeamColor() != teamColor) {
+                    Set<ChessMove> pieceMoves = (Set<ChessMove>) board.getPiece(new ChessPosition(i,j)).pieceMoves(board, new ChessPosition(i,j));
+                    for (ChessMove move : pieceMoves) {
+                        if (move.getEndPosition().equals(kingPosition)) {
+                            check = true;
+                            break; //stops as soon as first threatening piece is found
+                        }
+                    }
+                }
+            }
+        }
+        return check;
     }
 
     /**
@@ -81,7 +111,8 @@ private TeamColor currentTeamTurn = TeamColor.WHITE;
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        boolean check = isInCheck(teamColor);
+
     }
 
     /**
@@ -92,7 +123,8 @@ private TeamColor currentTeamTurn = TeamColor.WHITE;
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        boolean check = isInCheck(teamColor);
+
     }
 
     /**
