@@ -10,8 +10,8 @@ import java.util.HashSet;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private final ChessBoard board=new ChessBoard();
-    private TeamColor currentTeamTurn=TeamColor.WHITE;
+    private final ChessBoard board = new ChessBoard();
+    private TeamColor currentTeamTurn = TeamColor.WHITE;
 
     public ChessGame() {
 
@@ -30,7 +30,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        currentTeamTurn=team;
+        currentTeamTurn = team;
     }
 
     /**
@@ -51,8 +51,8 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if (board.getPiece(startPosition) != null) {
             ChessPiece piece=board.getPiece(startPosition);
-            Collection<ChessMove> potentialMoves=piece.pieceMoves(board, startPosition);
-            Collection<ChessMove> validMoves=new HashSet<>();
+            Collection<ChessMove> potentialMoves = piece.pieceMoves(board, startPosition);
+            Collection<ChessMove> validMoves = new HashSet<>();
             for (ChessMove potentialMove : potentialMoves) {
                 board.removePiece(potentialMove.getStartPosition());
                 board.addPiece(potentialMove.getEndPosition(), piece);
@@ -77,12 +77,12 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if (board.getPiece(move.getStartPosition()) != null) {
             ChessPiece piece=board.getPiece(move.getStartPosition());
-            boolean matchingMove=false;
+            boolean matchingMove = false;
             for (ChessMove validMove : validMoves(move.getStartPosition())) {
                 if (validMove.equals(move)) {
                     board.removePiece(move.getStartPosition());
                     board.addPiece(move.getEndPosition(), piece);
-                    matchingMove=true;
+                    matchingMove = true;
                     if (getTeamTurn() == TeamColor.WHITE) {
                         setTeamTurn(TeamColor.BLACK);
                     }
@@ -105,8 +105,8 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition=null;
-        for (int i=1; i < 9; i++) {
-            for (int j=1; j < 9; j++) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
                 ChessPosition currentPosition=new ChessPosition(i, j);
                 if (board.getPiece(currentPosition) != null &&
                         board.getPiece(currentPosition).getPieceType().equals(ChessPiece.PieceType.KING) &&
@@ -120,8 +120,8 @@ public class ChessGame {
             return false;
         }
         boolean inCheck=false;
-        for (int i=1; i < 9; i++) {
-            for (int j=1; j < 9; j++) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
                 ChessPosition currentPosition=new ChessPosition(i, j);
                 if (board.getPiece(currentPosition) != null &&
                         board.getPiece(currentPosition).getTeamColor() != teamColor) {
@@ -148,9 +148,9 @@ public class ChessGame {
             return false;
         }
         else {
-            for (int i=1; i < 9; i++) {
-                for (int j=1; j < 9; j++) {
-                    ChessPosition currentPosition=new ChessPosition(i, j);
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
+                    ChessPosition currentPosition = new ChessPosition(i, j);
                     if (board.getPiece(currentPosition) != null &&
                             board.getPiece(currentPosition).getTeamColor() == teamColor) {
                         if (!validMoves(currentPosition).isEmpty()) {
@@ -162,7 +162,7 @@ public class ChessGame {
             return true;
         }
     }
-
+    //could make a helper function that checks to see if given team has any valid moves
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves
@@ -175,8 +175,8 @@ public class ChessGame {
             return false;
         }
         else {
-            for (int i=1; i < 9; i++) {
-                for (int j=1; j < 9; j++) {
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
                     ChessPosition currentPosition=new ChessPosition(i, j);
                     if (board.getPiece(currentPosition) != null &&
                             board.getPiece(currentPosition).getTeamColor() == teamColor) {
@@ -196,8 +196,13 @@ public class ChessGame {
      *
      * @param board the new board to use
      */
-    public void setBoard(ChessBoard board) { //perform deep copy? shallow copy?
-        throw new RuntimeException("Not implemented");
+    public void setBoard(ChessBoard board) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                this.board.addPiece(currentPosition, board.getPiece(currentPosition));
+            }
+        }
     }
 
     /**
