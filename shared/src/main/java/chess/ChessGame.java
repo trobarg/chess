@@ -14,7 +14,7 @@ public class ChessGame {
     private TeamColor currentTeamTurn = TeamColor.WHITE;
 
     public ChessGame() {
-
+        board.resetBoard();
     }
 
     /**
@@ -85,7 +85,10 @@ public class ChessGame {
             for (ChessMove validMove : validMoves) {
                 if (validMove.equals(move)) {
                     board.removePiece(move.getStartPosition());
-                    board.addPiece(move.getEndPosition(), piece);
+                    if (move.getPromotionPiece() == null) {
+                        board.addPiece(move.getEndPosition(), piece);
+                    }
+                    else board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
                     matchingMove = true;
                     if (getTeamTurn() == TeamColor.WHITE) {
                         setTeamTurn(TeamColor.BLACK);
