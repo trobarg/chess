@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -48,9 +50,23 @@ private TeamColor currentTeamTurn = TeamColor.WHITE;
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) { //Don't have a super elegant solution yet
         if (board.getPiece(startPosition) != null) {
-            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+            ChessPiece piece = board.getPiece(startPosition);
+            Collection<ChessMove> potentialMoves = piece.pieceMoves(board, startPosition);
+            Collection<ChessMove> validMoves = new HashSet<ChessMove>();
+            for (ChessMove move : potentialMoves) {
+                board.removePiece(move.getStartPosition());
+                board.addPiece(move.getEndPosition(), piece);
+                if (isInCheck(piece.getTeamColor())) {
+                    board.removePiece(move.getEndPosition());
+                    board.addPiece(move.getStartPosition(), piece);
+                }
+                else {
+                    validMoves.add(move);
+                }
+            }
+            return validMoves;
         }
         else return null;
     }
@@ -67,8 +83,10 @@ private TeamColor currentTeamTurn = TeamColor.WHITE;
             boolean matchingMove = false;
             for (ChessMove pieceMove : validMoves(move.getStartPosition())) {
                 if (pieceMove.equals(move)) {
-                    board.addPiece(move.getStartPosition(), null);
+                    board.removePiece(move.getStartPosition());
                     board.addPiece(move.getEndPosition(), piece);
+                    matchingMove = true;
+                    break;
                 }
             }
             if (!matchingMove) {
@@ -86,7 +104,7 @@ private TeamColor currentTeamTurn = TeamColor.WHITE;
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) { //use validMoves() method from this class instead
+    public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = null;
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {

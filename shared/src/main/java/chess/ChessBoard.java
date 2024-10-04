@@ -14,6 +14,14 @@ public class ChessBoard {
         
     }
 
+    public ChessBoard(ChessBoard other) { //might not use in validMoves() functionality
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                this.board[i][j] =  other.board[i][j]; //shouldn't work, since board is a private member variable
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -22,6 +30,16 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         board[position.getRow() - 1][position.getColumn() -1] = piece; //Array indexes from 0 to 7, but ChessPositions go from 1 to 8?
+    }
+
+    /**
+     * Removes a chess piece from the chessboard
+     * Has no effect if the given position is already empty
+     *
+     * @param position where to remove the piece from
+     */
+    public void removePiece(ChessPosition position) {
+        board[position.getRow() - 1][position.getColumn() -1] = null;
     }
 
     /**
