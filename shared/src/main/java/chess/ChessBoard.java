@@ -35,6 +35,7 @@ public class ChessBoard {
         return board[position.getRow() - 1][position.getColumn() - 1]; //Array indexes from 0 to 7, but ChessPositions go from 1 to 8?
     }
 
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
