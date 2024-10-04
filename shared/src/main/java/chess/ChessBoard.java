@@ -91,9 +91,10 @@ public class ChessBoard {
         StringBuilder sb = new StringBuilder();
         for (int row = 7; row > -1; row--) {
             for (int column = 0; column < 8; column++) {
-                sb.append(board[row][column] == null ? "" : board[row][column].toString());
+                sb.append("|");
+                sb.append(board[row][column] == null ? " " : board[row][column].toString());
             }
-            sb.append("\n");
+            sb.append("|\n");
         }
         return sb.toString();
     }
