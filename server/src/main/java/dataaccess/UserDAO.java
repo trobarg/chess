@@ -7,5 +7,5 @@ public interface UserDAO {
     UserData getUserByUsername(String username) throws DataAccessException;
     //not sure if an updateUser method will be necessary yet
     void deleteUserByUsername(String username) throws DataAccessException;
-    //clearAll method?
+    void clearUsers();
 }

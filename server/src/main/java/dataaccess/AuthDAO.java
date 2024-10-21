@@ -4,8 +4,8 @@ import model.AuthData;
 
 public interface AuthDAO {
     void addAuth(AuthData auth) throws DataAccessException;
-    AuthData getAuthByUsername(String username) throws DataAccessException;
+    AuthData getAuthByAuthToken(String authToken) throws DataAccessException;
     //not sure if an updateAuth method will be necessary yet
-    void deleteAuthByUsername(String username) throws DataAccessException;
-    //clearAll method?
+    void deleteAuthByAuthToken(String authToken) throws DataAccessException;
+    void clearAuths();
 }
