@@ -8,28 +8,18 @@ public class MemoryAuthDAO implements AuthDAO {
     private final HashMap<String, AuthData> authorizations = new HashMap<>(); //user can have multiple authorizations
 
     @Override
-    public void addAuth(AuthData auth) throws DataAccessException {
-        String authToken = auth.authToken();
-        if (authorizations.containsKey(authToken)) {
-            throw new DataAccessException("Authorization already exists");
-        }
-        authorizations.put(authToken, auth);
+    public AuthData addAuth(AuthData auth) {
+        return authorizations.put(auth.authToken(), auth);
     }
 
     @Override
-    public AuthData getAuthByAuthToken(String authToken) throws DataAccessException {
-        if (authorizations.containsKey(authToken)) {
-            return authorizations.get(authToken);
-        }
-        throw new DataAccessException("Authorization does not exist");
+    public AuthData getAuthByAuthToken(String authToken) {
+       return authorizations.get(authToken);
     }
 
     @Override
-    public void deleteAuthByAuthToken(String authToken) throws DataAccessException {
-        if (authorizations.containsKey(authToken)) {
-            authorizations.remove(authToken);
-        }
-        throw new DataAccessException("Authorization does not exist");
+    public AuthData deleteAuthByAuthToken(String authToken) {
+        return authorizations.remove(authToken);
     }
 
     @Override
