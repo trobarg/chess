@@ -1,21 +1,15 @@
 package service;
 
 import java.util.UUID;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
-import dataaccess.AuthDAO;
+
+import dataaccess.*;
 import service.ServiceException; //necessary when in the same package?
 import model.UserData;
 import model.AuthData;
 
 public class UserService {
-    private final UserDAO userDAO;
-    private final AuthDAO authDAO;
-
-    public UserService(UserDAO userDAO, AuthDAO authDAO) {
-        this.userDAO = userDAO;
-        this.authDAO = authDAO;
-    }
+    private final UserDAO userDAO = new MemoryUserDAO();
+    private final AuthDAO authDAO = new MemoryAuthDAO();
 
     public AuthData register(UserData user) throws ServiceException {
         try {
@@ -52,7 +46,8 @@ public class UserService {
             throw new ServiceException(500, dAE.getMessage());
         }
     }
-    public void logout(AuthData auth) throws ServiceException{
+
+    public void logout(AuthData auth) throws ServiceException {
         try {
             if (authDAO.getAuthByAuthToken(auth.authToken()) == null) {
                 throw new ServiceException(401, "Error: Unauthorized");

@@ -19,8 +19,18 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
+    public Collection<Integer> getGameIDs() {
+        return games.keySet();
+    }
+
+    @Override
     public GameData getGameByID(int gameID) {
         return games.get(gameID);
+    }
+
+    @Override
+    public GameData updateGame(GameData game) { //functionally identical to adding a game?
+        return games.put(game.GameID(), game);
     }
 
     @Override
