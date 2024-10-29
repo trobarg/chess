@@ -10,7 +10,7 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public GameData addGame(GameData game) {
-        return games.put(game.GameID(), game);
+        return games.put(game.gameID(), game);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public GameData updateGame(GameData game) { //functionally identical to adding a game?
-        return games.put(game.GameID(), game);
+        return games.put(game.gameID(), game);
     }
 
     @Override

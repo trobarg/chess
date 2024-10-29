@@ -13,24 +13,23 @@ public class GameService {
     private final GameDAO gameDAO = new MemoryGameDAO();
     private final AuthDAO authDAO = new MemoryAuthDAO();
 
-
-    public Collection<GameData> listGames(AuthData auth) throws ServiceException {
+    public Collection<GameData> listGames(AuthData auth) throws ResponseException {
         try {
             if (authDAO.getAuthByAuthToken(auth.authToken()) == null) {
-                throw new ServiceException(401, "Error: Unauthorized");
+                throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
                 return gameDAO.listGames();
             }
         }
         catch (DataAccessException dAE) {
-            throw new ServiceException(500, dAE.getMessage());
+            throw new ResponseException(500, dAE.getMessage());
         }
     }
-    public GameData createGame(GameData game, AuthData auth) throws ServiceException { //game already contains gameID from elsewhere?
+    public GameData createGame(GameData game, AuthData auth) throws ResponseException { //game already contains gameID from elsewhere?
         try {
             if (authDAO.getAuthByAuthToken(auth.authToken()) == null) {
-                throw new ServiceException(401, "Error: Unauthorized");
+                throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
                 Random rand = new Random();
@@ -43,15 +42,15 @@ public class GameService {
             }
         }
         catch (DataAccessException dAE) {
-            throw new ServiceException(500, dAE.getMessage());
+            throw new ResponseException(500, dAE.getMessage());
         }
     }
-    public void joinGame() throws ServiceException {
+    public void joinGame() throws ResponseException {
         try {
 
         }
         catch (DataAccessException dAE) {
-            throw new ServiceException(500, dAE.getMessage());
+            throw new ResponseException(500, dAE.getMessage());
         }
     }
 }

@@ -1,4 +1,4 @@
 package model;
 
-public record LogoutRequest(String AuthToken) {
+public record LogoutRequest(String authToken) {
 }

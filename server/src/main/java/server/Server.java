@@ -3,6 +3,7 @@ package server;
 import handler.UserHandler;
 import handler.GameHandler;
 
+import service.ResponseException;
 import spark.*;
 
 public class Server {
@@ -21,11 +22,17 @@ private final GameHandler gameHandler = new GameHandler();
         Spark.get("/game", gameHandler::listGames);
         Spark.post("/game", gameHandler::createGame);
         Spark.put("/game", gameHandler::joinGame);
+        Spark.exception(ResponseException.class, this::exceptionHandler);
 
         Spark.init();//This line initializes the server and can be removed once you have a functioning endpoint
 
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    private void exceptionHandler(ResponseException rE, Request req, Response res) {
+        res.status(rE.StatusCode());
+        res.body(rE.getMessage());
     }
 
     public int port() {

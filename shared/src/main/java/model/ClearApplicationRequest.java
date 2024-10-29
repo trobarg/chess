@@ -1,4 +1,4 @@
 package model;
 
-public class ClearApplicationRequest {
+public record ClearApplicationRequest() {
 }
