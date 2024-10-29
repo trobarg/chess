@@ -3,8 +3,7 @@ package service;
 import java.util.HashSet;
 
 import dataaccess.*;
-import model.GameData;
-import model.AuthData;
+import model.*;
 
 import java.util.Collection;
 import java.util.Random;
@@ -13,9 +12,9 @@ public class GameService {
     private final GameDAO gameDAO = new MemoryGameDAO();
     private final AuthDAO authDAO = new MemoryAuthDAO();
 
-    public Collection<GameData> listGames(AuthData auth) throws ResponseException {
+    public Collection<GameData> listGames(RequestWithAuth listGamesRequest) throws ResponseException {
         try {
-            if (authDAO.getAuthByAuthToken(auth.authToken()) == null) {
+            if (authDAO.getAuthByAuthToken(listGamesRequest.authToken()) == null) {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
@@ -26,9 +25,9 @@ public class GameService {
             throw new ResponseException(500, dAE.getMessage());
         }
     }
-    public GameData createGame(GameData game, AuthData auth) throws ResponseException { //game already contains gameID from elsewhere?
+    public GameData createGame(CreateGameRequest createGameRequest) throws ResponseException { //game already contains gameID from elsewhere?
         try {
-            if (authDAO.getAuthByAuthToken(auth.authToken()) == null) {
+            if (authDAO.getAuthByAuthToken(createGameRequest.authToken()) == null) {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
@@ -45,7 +44,7 @@ public class GameService {
             throw new ResponseException(500, dAE.getMessage());
         }
     }
-    public void joinGame() throws ResponseException {
+    public void joinGame(JoinGameRequest joinGameRequest) throws ResponseException {//null return type?
         try {
 
         }

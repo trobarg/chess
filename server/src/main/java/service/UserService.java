@@ -26,7 +26,7 @@ public class UserService {
         }
     }
 
-    public AuthData login(LoginRequest loginRequest) throws ResponseException { //login won't contain email
+    public AuthData login(LoginRequest loginRequest) throws ResponseException {
         try {
             if (userDAO.getUserByUsername(loginRequest.username()) == null) {
                 throw new ResponseException(401, "Error: Unauthorized"); //Not some kind of username not found error?
@@ -45,7 +45,7 @@ public class UserService {
         }
     }
 
-    public void logout(LogoutRequest logoutRequest) throws ResponseException {
+    public void logout(RequestWithAuth logoutRequest) throws ResponseException {//null return type?
         try {
             if (authDAO.getAuthByAuthToken(logoutRequest.authToken()) == null) {
                 throw new ResponseException(401, "Error: Unauthorized");
