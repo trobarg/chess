@@ -32,6 +32,11 @@ public class ChessPosition {
     }
 
     @Override
+    public String toString() {
+        return " " + row + "," + col + " ";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         else if (this == o) return true;
@@ -49,4 +54,7 @@ public class ChessPosition {
         result = prime * result + this.col;
         return result;
     }
+
+
+
 }
