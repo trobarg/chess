@@ -7,7 +7,7 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
+    private final ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
         
     }
@@ -19,7 +19,17 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        board[position.getRow() - 1][position.getColumn() -1] = piece; //Array indexes from 0 to 7, but ChessPositions go from 1 to 8
+    }
+
+    /**
+     * Removes a chess piece from the chessboard
+     * Has no effect if the given position is already empty
+     *
+     * @param position where to remove the piece from
+     */
+    public void removePiece(ChessPosition position) {
+        board[position.getRow() - 1][position.getColumn() -1] = null;
     }
 
     /**
@@ -30,7 +40,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        return board[position.getRow() - 1][position.getColumn() - 1]; //Array indexes from 0 to 7, but ChessPositions go from 1 to 8
     }
 
     /**

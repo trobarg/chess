@@ -54,7 +54,4 @@ public class ChessPosition {
         result = prime * result + this.col;
         return result;
     }
-
-
-
 }
