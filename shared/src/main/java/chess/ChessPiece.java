@@ -9,8 +9,12 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -29,14 +33,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -48,5 +52,40 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public String toString() {
+        String abbr = switch (type) {
+            case KING -> "K";
+            case QUEEN -> "Q";
+            case ROOK -> "R";
+            case BISHOP -> "B";
+            case KNIGHT -> "N";
+            case PAWN -> "P";
+        };
+        if (pieceColor == ChessGame.TeamColor.BLACK) {
+            abbr = abbr.toLowerCase();
+        }
+        return abbr;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        else if (this == o) return true;
+        else {
+            ChessPiece other = (ChessPiece) o;
+            return pieceColor == other.pieceColor && type == other.type;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((pieceColor == null) ? 0 : pieceColor.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
     }
 }
