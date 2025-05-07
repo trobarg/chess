@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Arrays;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -19,7 +21,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow() - 1][position.getColumn() -1] = piece; //Array indexes from 0 to 7, but ChessPositions go from 1 to 8
+        board[position.getRow() - 1][position.getColumn() -1] = piece;
     }
 
     /**
@@ -40,7 +42,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow() - 1][position.getColumn() - 1]; //Array indexes from 0 to 7, but ChessPositions go from 1 to 8
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -94,24 +96,12 @@ public class ChessBoard {
         else if (this == o) return true;
         else {
             ChessBoard other = (ChessBoard) o;
-            for (int row = 0; row < 8; row++) {
-                for (int col = 0; col < 8; col++) {
-                    if (board[row][col] != other.board[row][col]) return false;
-                }
-            }
-            return true;
+            return Arrays.deepEquals(board, other.board);
         }
     }
 
     @Override
-    public int hashCode() { //possible int overflow?
-        final int prime = 31;
-        int result = 1;
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                result = result * 31 + ((board[row][col] == null) ? 0 : board[row][col].hashCode());
-            }
-        }
-        return result;
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
     }
 }
