@@ -39,6 +39,5 @@ public abstract class BaseMovementFunctionality implements MovementRule {
             }
         }
     }
-    public abstract Set<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
-    }
+    public abstract Set<ChessMove> pieceMoves(ChessBoard board, ChessPosition position);
 }
