@@ -13,6 +13,13 @@ import java.util.Objects;
 public class ChessGame {
     private final ChessBoard board = new ChessBoard();
     private TeamColor currentTeamTurn = TeamColor.WHITE;
+    private boolean whiteCouldRightCastle = true;
+    private boolean whiteCouldLeftCastle = true;
+    private boolean blackCouldRightCastle = true;
+    private boolean blackCouldLeftCastle = true;
+    private boolean whiteCouldEnPassant = false;
+    private boolean blackCouldEnPassant = false;
+    private int enPassantColumn;
 
     public ChessGame() {
         board.resetBoard();
