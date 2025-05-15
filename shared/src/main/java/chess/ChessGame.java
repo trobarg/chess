@@ -71,6 +71,26 @@ public class ChessGame {
                 board.addPiece(potentialMove.getStartPosition(), piece);
                 board.addPiece(potentialMove.getEndPosition(), prevPiece);
             }
+            if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                if (piece.getTeamColor() == TeamColor.WHITE) {
+                    if (whiteCouldRightCastle) {
+                        for (int col = 6; col < 8; col++) {
+
+                        }
+                    }
+                    if (whiteCouldLeftCastle) {
+
+                    }
+                }
+                else if (piece.getTeamColor() == TeamColor.BLACK) {
+                    if (blackCouldRightCastle) {
+
+                    }
+                    if (blackCouldLeftCastle) {
+
+                    }
+                }
+            }
             return validMoves;
         }
         else return null;
@@ -83,7 +103,33 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        if (board.getPiece(move.getStartPosition()) != null) {
+            ChessPiece piece = board.getPiece(move.getStartPosition());
+            if (piece.getTeamColor() != currentTeamTurn) {
+                throw new InvalidMoveException();
+            }
+            boolean matchingMove = false;
+            Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+            for (ChessMove validMove : validMoves) {
+                if (validMove.equals(move)) {
+                    board.removePiece(move.getStartPosition());
+                    if (move.getPromotionPiece() == null) {
+                        board.addPiece(move.getEndPosition(), piece);
+                    }
+                    else board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+                    matchingMove = true;
+                    if (getTeamTurn() == TeamColor.WHITE) {
+                        setTeamTurn(TeamColor.BLACK);
+                    }
+                    else setTeamTurn(TeamColor.WHITE);
+                    break;
+                }
+            }
+            if (!matchingMove) {
+                throw new InvalidMoveException();
+            }
+        }
+        else throw new InvalidMoveException();
     }
 
     /**
