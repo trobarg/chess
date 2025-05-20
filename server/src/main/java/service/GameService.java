@@ -9,8 +9,13 @@ import java.util.Collection;
 import java.util.Random;
 
 public class GameService {
-    private final GameDAO gameDAO = new MemoryGameDAO();
-    private final AuthDAO authDAO = new MemoryAuthDAO();
+    private GameDAO gameDAO;
+    private AuthDAO authDAO;
+    //Potential problems with different services not using the same DAOs?
+    public GameService(GameDAO gameDAO, AuthDAO authDAO) {
+        this.gameDAO = gameDAO;
+        this.authDAO = authDAO;
+    }
     public Collection<GameData> listGames(RequestWithAuth listGamesRequest) throws ResponseException {
         try {
             if (authDAO.getAuthByAuthToken(listGamesRequest.authToken()) == null) {

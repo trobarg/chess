@@ -7,7 +7,10 @@ import model.*;
 import service.GameService;
 
 public class GameHandler {
-private final GameService gameService = new GameService();
+    private final GameService gameService;
+    public GameHandler(GameService gameService) {
+        this.gameService = gameService;
+    }
     public Object listGames(Request req, Response res) throws ResponseException {
         var listGamesRequest = new Gson().fromJson((req.headers("authorization")), RequestWithAuth.class);
         return new Gson().toJson(gameService.listGames(listGamesRequest));

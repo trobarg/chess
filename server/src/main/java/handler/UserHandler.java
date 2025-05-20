@@ -7,7 +7,10 @@ import model.*;
 import service.UserService;
 
 public class UserHandler {
-    private final UserService userService = new UserService();
+    private final UserService userService;
+    public UserHandler(UserService userService) {
+        this.userService = userService;
+    }
     public Object register(Request req, Response res) throws ResponseException {
         var userData = new Gson().fromJson(req.body(), UserData.class);
         return new Gson().toJson(userService.register(userData));

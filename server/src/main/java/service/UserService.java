@@ -5,9 +5,13 @@ import dataaccess.*;
 import model.*;
 
 public class UserService {
-    private final UserDAO userDAO = new MemoryUserDAO();
-    private final AuthDAO authDAO = new MemoryAuthDAO();
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
     //What type of constructor is needed?
+    public UserService(UserDAO userDAO, AuthDAO authDAO) {
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
     public AuthData register(UserData user) throws ResponseException {
         try {
             if (userDAO.getUserByUsername(user.username()) != null) {
