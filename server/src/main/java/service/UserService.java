@@ -20,7 +20,7 @@ public class UserService {
             else {
                 userDAO.addUser(user);
                 String authToken = UUID.randomUUID().toString();
-                authDAO.addAuth(new AuthData(user.username(), authToken));
+                authDAO.addAuth(new AuthData(authToken, user.username())); //order of variables is important!
                 return authDAO.getAuthByAuthToken(authToken);
             }
         }
@@ -39,8 +39,9 @@ public class UserService {
             }
             else {
                 String authToken = UUID.randomUUID().toString();
-                authDAO.addAuth(new AuthData(loginRequest.username(), authToken));
+                authDAO.addAuth(new AuthData(authToken, loginRequest.username())); //order of variables is important!
                 return authDAO.getAuthByAuthToken(authToken);
+
             }
         }
         catch (DataAccessException dAE) {
