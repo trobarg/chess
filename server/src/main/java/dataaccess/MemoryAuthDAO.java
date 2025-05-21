@@ -4,7 +4,6 @@ import model.AuthData;
 
 import java.util.HashMap;
 
-//throws DataAccessException on methods?
 public class MemoryAuthDAO implements AuthDAO {
     private final HashMap<String, AuthData> authorizations = new HashMap<>(); //User can have multiple authorizations in current implementation?
 

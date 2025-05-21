@@ -3,7 +3,6 @@ package dataaccess;
 import model.UserData;
 
 import java.util.HashMap;
-//throws DataAccessException on methods?
 public class MemoryUserDAO implements UserDAO {
     private final HashMap<String, UserData> users = new HashMap<>();
 

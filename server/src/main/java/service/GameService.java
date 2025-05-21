@@ -11,7 +11,6 @@ import java.util.Random;
 public class GameService {
     private GameDAO gameDAO;
     private AuthDAO authDAO;
-    //Potential problems with different services not using the same DAOs?
     public GameService(GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
         this.authDAO = authDAO;

@@ -12,7 +12,9 @@ public class GameHandler {
         this.gameService = gameService;
     }
     public Object listGames(Request req, Response res) throws ResponseException {
-        var listGamesRequest = new Gson().fromJson((req.headers("authorization")), RequestWithAuth.class);
+        RequestWithAuth listGamesRequest = new RequestWithAuth(req.headers("authorization"));
+        gameService.listGames(listGamesRequest);
+        res.status(200);
         return new Gson().toJson(gameService.listGames(listGamesRequest));
     }
     public Object createGame(Request req, Response res) throws ResponseException {
