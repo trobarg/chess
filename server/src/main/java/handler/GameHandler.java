@@ -6,6 +6,8 @@ import spark.*;
 import model.*;
 import service.GameService;
 
+import java.util.Collection;
+
 public class GameHandler {
     private final GameService gameService;
     public GameHandler(GameService gameService) {
@@ -13,9 +15,9 @@ public class GameHandler {
     }
     public Object listGames(Request req, Response res) throws ResponseException {
         RequestWithAuth listGamesRequest = new RequestWithAuth(req.headers("authorization"));
-        gameService.listGames(listGamesRequest);
+        GamesList games = new GamesList(gameService.listGames(listGamesRequest));
         res.status(200);
-        return new Gson().toJson(gameService.listGames(listGamesRequest));
+        return new Gson().toJson(games);
     }
     public Object createGame(Request req, Response res) throws ResponseException {
         String authToken = req.headers("authorization");
