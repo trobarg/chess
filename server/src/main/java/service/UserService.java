@@ -20,7 +20,8 @@ public class UserService {
             else {
                 userDAO.addUser(user);
                 String authToken = UUID.randomUUID().toString();
-                return authDAO.addAuth(new AuthData(authToken, user.username())); //order of variables is important!
+                authDAO.addAuth(new AuthData(authToken, user.username())); //order of variables is important!
+                return authDAO.getAuthByAuthToken(authToken);
             }
         }
         catch (DataAccessException dAE) {
@@ -36,9 +37,10 @@ public class UserService {
             else if (!userDAO.getUserByUsername(loginRequest.username()).password().equals(loginRequest.password())) {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
-            else { //Set response code to 200?
+            else {
                 String authToken = UUID.randomUUID().toString();
-                return authDAO.addAuth(new AuthData(authToken, loginRequest.username())); //order of variables is important!
+                authDAO.addAuth(new AuthData(authToken, loginRequest.username())); //order of variables is important!
+                return authDAO.getAuthByAuthToken(authToken);
             }
         }
         catch (DataAccessException dAE) {

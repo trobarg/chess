@@ -13,7 +13,12 @@ public class UserHandler {
     }
     public Object register(Request req, Response res) throws ResponseException {
         var userData = new Gson().fromJson(req.body(), UserData.class);
-        return new Gson().toJson(userService.register(userData));
+        if (userData.username() == null || userData.password() == null || userData.email() == null) { //not sure email can't be null
+            throw new ResponseException(400, "Error: Bad request");
+        }
+        AuthData authData = userService.register(userData);
+        res.status(200);
+        return new Gson().toJson(authData);
     }
 
     public Object login(Request req, Response res) throws ResponseException {
@@ -21,16 +26,9 @@ public class UserHandler {
         if (loginRequest.username() == null || loginRequest.password() == null) {
             throw new ResponseException(400, "Error: Bad request");
         }
-        try {
-            AuthData authData = userService.login(loginRequest);
-            res.status(200);
-            return new Gson().toJson(authData);
-        }
-        catch (ResponseException rE) {
-            res.status(rE.statusCode());
-            //return "{ \"message\": \"Error\": " + rE.getMessage() + " }";
-        }
-        return null;
+        AuthData authData = userService.login(loginRequest);
+        res.status(200);
+        return new Gson().toJson(authData);
     }
     public Object logout(Request req, Response res) throws ResponseException {
         var logoutRequest = new Gson().fromJson(req.headers("authorization"), RequestWithAuth.class);
