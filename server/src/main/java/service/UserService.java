@@ -7,7 +7,7 @@ import model.*;
 public class UserService {
     private UserDAO userDAO;
     private AuthDAO authDAO;
-    //What type of constructor is needed?
+
     public UserService(UserDAO userDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
@@ -20,8 +20,7 @@ public class UserService {
             else {
                 userDAO.addUser(user);
                 String authToken = UUID.randomUUID().toString();
-                authDAO.addAuth(new AuthData(authToken, user.username())); //order of variables is important!
-                return authDAO.getAuthByAuthToken(authToken);
+                return authDAO.addAuth(new AuthData(authToken, user.username())); //order of variables is important!
             }
         }
         catch (DataAccessException dAE) {
@@ -37,11 +36,9 @@ public class UserService {
             else if (!userDAO.getUserByUsername(loginRequest.username()).password().equals(loginRequest.password())) {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
-            else {
+            else { //Set response code to 200?
                 String authToken = UUID.randomUUID().toString();
-                authDAO.addAuth(new AuthData(authToken, loginRequest.username())); //order of variables is important!
-                return authDAO.getAuthByAuthToken(authToken);
-
+                return authDAO.addAuth(new AuthData(authToken, loginRequest.username())); //order of variables is important!
             }
         }
         catch (DataAccessException dAE) {

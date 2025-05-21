@@ -15,9 +15,22 @@ public class UserHandler {
         var userData = new Gson().fromJson(req.body(), UserData.class);
         return new Gson().toJson(userService.register(userData));
     }
+
     public Object login(Request req, Response res) throws ResponseException {
         var loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
-        return new Gson().toJson(userService.login(loginRequest));
+        if (loginRequest.username() == null || loginRequest.password() == null) {
+            throw new ResponseException(400, "Error: Bad request");
+        }
+        try {
+            AuthData authData = userService.login(loginRequest);
+            res.status(200);
+            return new Gson().toJson(authData);
+        }
+        catch (ResponseException rE) {
+            res.status(rE.statusCode());
+            //return "{ \"message\": \"Error\": " + rE.getMessage() + " }";
+        }
+        return null;
     }
     public Object logout(Request req, Response res) throws ResponseException {
         var logoutRequest = new Gson().fromJson(req.headers("authorization"), RequestWithAuth.class);

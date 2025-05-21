@@ -1,7 +1,10 @@
 package server;
 
+import com.google.gson.Gson;
+
 import dataaccess.*;
 import handler.*;
+import model.ResponseExceptionContent;
 import service.*;
 import spark.*;
 
@@ -32,9 +35,10 @@ public class Server {
     }
 
     private void exceptionHandler(ResponseException rE, Request req, Response res) {
-        res.status(rE.StatusCode());
-        res.body(rE.getMessage());
+        res.status(rE.statusCode());
+        res.body(new Gson().toJson(new ResponseExceptionContent(rE.getMessage())));
     }
+
 
     public int port() {
         return Spark.port();
