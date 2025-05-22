@@ -127,7 +127,9 @@ public class ChessGame {
                     if (getTeamTurn() == TeamColor.WHITE) {
                         setTeamTurn(TeamColor.BLACK);
                     }
-                    else setTeamTurn(TeamColor.WHITE);
+                    else {
+                        setTeamTurn(TeamColor.WHITE);
+                    }
                     break;
                 }
             }

@@ -34,6 +34,6 @@ public class UserHandler {
         RequestWithAuth logoutRequest = new RequestWithAuth(req.headers("authorization"));//only safe because nothing from body
         userService.logout(logoutRequest);
         res.status(200);
-        return new Gson().toJson(new LogoutResult());
+        return new Gson().toJson(new EmptyResult());
     }
 }

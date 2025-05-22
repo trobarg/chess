@@ -14,10 +14,10 @@ public class ClearService {
         this.authDAO = authDAO;
     }
 
-    public ClearApplicationResult clearApplication(ClearApplicationRequest clearApplicationRequest) throws DataAccessException {
+    public EmptyResult clearApplication(ClearApplicationRequest clearApplicationRequest) throws DataAccessException {
         userDAO.clearUsers();
         gameDAO.clearGames();
         authDAO.clearAuths();
-        return new ClearApplicationResult();
+        return new EmptyResult();
     }
 }

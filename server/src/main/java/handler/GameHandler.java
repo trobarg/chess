@@ -54,6 +54,6 @@ public class GameHandler {
             throw new ResponseException(400, "Error: Bad request");
         }
         gameService.joinGame(joinGameRequest);
-        return new Gson().toJson(new JoinGameResult());
+        return new Gson().toJson(new EmptyResult());
     }
 }
