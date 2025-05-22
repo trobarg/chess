@@ -71,28 +71,6 @@ public class ChessGame {
                 board.addPiece(potentialMove.getStartPosition(), piece);
                 board.addPiece(potentialMove.getEndPosition(), prevPiece);
             }
-            /*
-            if (piece.getPieceType() == ChessPiece.PieceType.KING) {
-                if (piece.getTeamColor() == TeamColor.WHITE) {
-                    if (whiteCouldRightCastle) {
-                        for (int col = 6; col < 8; col++) {
-
-                        }
-                    }
-                    if (whiteCouldLeftCastle) {
-
-                    }
-                }
-                else if (piece.getTeamColor() == TeamColor.BLACK) {
-                    if (blackCouldRightCastle) {
-
-                    }
-                    if (blackCouldLeftCastle) {
-
-                    }
-                }
-            }
-            */
             return validMoves;
         }
         else {
