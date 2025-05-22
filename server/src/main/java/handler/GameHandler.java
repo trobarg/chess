@@ -20,7 +20,7 @@ public class GameHandler {
         return new Gson().toJson(games);
     }
     public Object createGame(Request req, Response res) throws ResponseException {
-        String combined = "{";
+        String combined = "{"; //this is a mess, but I wanted CreateGameRequest to include authToken as a field
         if (!req.headers("authorization").equals("{}")) {
             combined += "\"authToken\":\"" + req.headers("authorization") + "\"";
             if (!req.body().equals("{}")) {
@@ -40,11 +40,22 @@ public class GameHandler {
         return new Gson().toJson(createGameResult);
     }
     public Object joinGame(Request req, Response res) throws ResponseException {
-        String authToken = req.headers("authorization");
-        String body = req.body();
-        var intermediate = new Gson().toJson(authToken + body);
-        var joinGameRequest = new Gson().fromJson(intermediate, JoinGameRequest.class);
+        String combined = "{"; //also a mess, but I wanted JoinGameRequest to include authToken as a field
+        if (!req.headers("authorization").equals("{}")) {
+            combined += "\"authToken\":\"" + req.headers("authorization") + "\"";
+            if (!req.body().equals("{}")) {
+                combined += ",";
+            }
+        }
+        if (!req.body().equals("{}")) {
+            combined += req.body().substring(1, req.body().length() - 1);
+        }
+        combined += "}";
+        JoinGameRequest joinGameRequest = new Gson().fromJson(combined, JoinGameRequest.class);
+        if (joinGameRequest.playerColor() == null || joinGameRequest.gameID() <= 0) {
+            throw new ResponseException(400, "Error: Bad request");
+        }
         gameService.joinGame(joinGameRequest);
-        return new Gson().toJson(null);//potential to cause problems
+        return new Gson().toJson(new JoinGameResult());
     }
 }
