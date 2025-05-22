@@ -20,7 +20,7 @@ public class UserService {
             else {
                 userDAO.addUser(user);
                 String authToken = UUID.randomUUID().toString();
-                authDAO.addAuth(new AuthData(authToken, user.username())); //order of variables is important!
+                authDAO.addAuth(new AuthData(authToken, user.username()));//order of variables is important!
                 return authDAO.getAuthByAuthToken(authToken);
             }
         }
@@ -32,14 +32,14 @@ public class UserService {
     public AuthData login(LoginRequest loginRequest) throws ResponseException {
         try {
             if (userDAO.getUserByUsername(loginRequest.username()) == null) {
-                throw new ResponseException(401, "Error: Unauthorized"); //Not some kind of username not found error?
+                throw new ResponseException(401, "Error: Unauthorized");//Not some kind of username not found error?
             }
             else if (!userDAO.getUserByUsername(loginRequest.username()).password().equals(loginRequest.password())) {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
                 String authToken = UUID.randomUUID().toString();
-                authDAO.addAuth(new AuthData(authToken, loginRequest.username())); //order of variables is important!
+                authDAO.addAuth(new AuthData(authToken, loginRequest.username()));//order of variables is important!
                 return authDAO.getAuthByAuthToken(authToken);
             }
         }
@@ -48,7 +48,7 @@ public class UserService {
         }
     }
 
-    public void logout(RequestWithAuth logoutRequest) throws ResponseException {//null return type?
+    public void logout(RequestWithAuth logoutRequest) throws ResponseException {
         try {
             if (authDAO.getAuthByAuthToken(logoutRequest.authToken()) == null) {
                 throw new ResponseException(401, "Error: Unauthorized");

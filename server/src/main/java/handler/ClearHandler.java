@@ -14,7 +14,7 @@ public class ClearHandler {
         this.clearService = clearService;
     }
     public Object clearApplication (Request req, Response res) throws ResponseException, DataAccessException {
-        var clearApplicationRequest = new Gson().fromJson((req.headers("authorization")), ClearApplicationRequest.class);
+        ClearApplicationRequest clearApplicationRequest = new ClearApplicationRequest();
         return new Gson().toJson(clearService.clearApplication(clearApplicationRequest));
     }
 }

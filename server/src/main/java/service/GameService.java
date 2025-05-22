@@ -34,7 +34,6 @@ public class GameService {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
             else {//check against other games by the same name? error code 400 bad request?
-                //might have to drop this gameID generating logic for the tests
                 Random rand = new Random();
                 int bound = 1000;
                 Set<Integer> keys = (Set<Integer>) gameDAO.getGameIDs(); //not casting to HashSet<Integer> specifically
@@ -45,7 +44,6 @@ public class GameService {
                 while (keys.contains(gameID)) {
                     gameID = rand.nextInt(bound + 1);
                 }
-                //int gameID = gameDAO.getGameIDs().size() - 1;
                 new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame());
                 gameDAO.addGame(new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame()));
                 return new CreateGameResult(gameID); //not getting gameID from DAO
@@ -55,7 +53,7 @@ public class GameService {
             throw new ResponseException(500, dAE.getMessage());
         }
     }
-    public void joinGame(JoinGameRequest joinGameRequest) throws ResponseException {//null return type?
+    public void joinGame(JoinGameRequest joinGameRequest) throws ResponseException {
         try {
             if (authDAO.getAuthByAuthToken(joinGameRequest.authToken()) == null) {
                 throw new ResponseException(401, "Error: Unauthorized");
@@ -82,6 +80,9 @@ public class GameService {
                         GameData updated = new GameData(current.gameID(), current.whiteUsername(), playerUsername, current.gameName(), current.game());
                         gameDAO.updateGame(updated);
                     }
+                }
+                else {
+                    throw new ResponseException(400, "Error: Bad request");
                 }
             }
         }

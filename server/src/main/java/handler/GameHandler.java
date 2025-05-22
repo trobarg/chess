@@ -6,15 +6,13 @@ import spark.*;
 import model.*;
 import service.GameService;
 
-import java.util.Collection;
-
 public class GameHandler {
     private final GameService gameService;
     public GameHandler(GameService gameService) {
         this.gameService = gameService;
     }
     public Object listGames(Request req, Response res) throws ResponseException {
-        RequestWithAuth listGamesRequest = new RequestWithAuth(req.headers("authorization"));//only safe because nothing to deserialize?
+        RequestWithAuth listGamesRequest = new RequestWithAuth(req.headers("authorization"));//only safe because nothing from body
         GamesList games = new GamesList(gameService.listGames(listGamesRequest));
         res.status(200);
         return new Gson().toJson(games);
