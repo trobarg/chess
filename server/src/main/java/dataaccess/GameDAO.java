@@ -11,6 +11,6 @@ public interface GameDAO {
     GameData getGameByID(int gameID) throws DataAccessException;
     //might want other ways to get a game? Perhaps by gameName or usernames?
     GameData updateGame(GameData game) throws DataAccessException;
-    GameData DeleteGameByID(int gameID) throws DataAccessException;
+    GameData deleteGameByID(int gameID) throws DataAccessException;
     void clearGames() throws DataAccessException;
 }

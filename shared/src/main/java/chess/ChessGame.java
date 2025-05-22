@@ -95,7 +95,9 @@ public class ChessGame {
             */
             return validMoves;
         }
-        else return null;
+        else {
+            return null;
+        }
     }
 
     /**
@@ -118,7 +120,9 @@ public class ChessGame {
                     if (move.getPromotionPiece() == null) {
                         board.addPiece(move.getEndPosition(), piece);
                     }
-                    else board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+                    else {
+                        board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+                    }
                     matchingMove = true;
                     if (getTeamTurn() == TeamColor.WHITE) {
                         setTeamTurn(TeamColor.BLACK);
@@ -131,7 +135,9 @@ public class ChessGame {
                 throw new InvalidMoveException();
             }
         }
-        else throw new InvalidMoveException();
+        else {
+            throw new InvalidMoveException();
+        }
     }
 
     /**
@@ -186,18 +192,7 @@ public class ChessGame {
             return false;
         }
         else {
-            for (int i = 1; i < 9; i++) {
-                for (int j = 1; j < 9; j++) {
-                    ChessPosition currentPosition = new ChessPosition(i, j);
-                    if (board.getPiece(currentPosition) != null &&
-                            board.getPiece(currentPosition).getTeamColor() == teamColor) {
-                        if (!validMoves(currentPosition).isEmpty()) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
+            return noMovesPossible(teamColor);
         }
     }
 
@@ -213,19 +208,29 @@ public class ChessGame {
             return false;
         }
         else {
-            for (int i = 1; i < 9; i++) {
-                for (int j = 1; j < 9; j++) {
-                    ChessPosition currentPosition = new ChessPosition(i, j);
-                    if (board.getPiece(currentPosition) != null &&
-                            board.getPiece(currentPosition).getTeamColor() == teamColor) {
-                        if (!validMoves(currentPosition).isEmpty()) {
-                            return false;
-                        }
+            return noMovesPossible(teamColor);
+        }
+    }
+
+    /**
+     * Determines if the given team has no possible moves to make
+     *
+     * @param teamColor which team to check
+     * @return True if the specified team has no moves possible
+     */
+    private boolean noMovesPossible(TeamColor teamColor) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition currentPosition = new ChessPosition(i, j);
+                if (board.getPiece(currentPosition) != null &&
+                        board.getPiece(currentPosition).getTeamColor() == teamColor) {
+                    if (!validMoves(currentPosition).isEmpty()) {
+                        return false;
                     }
                 }
             }
-            return true;
         }
+        return true;
     }
 
     /**

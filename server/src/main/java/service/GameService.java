@@ -66,7 +66,8 @@ public class GameService {
                     else {
                         String playerUsername = authDAO.getAuthByAuthToken(joinGameRequest.authToken()).username();
                         GameData current = gameDAO.getGameByID(joinGameRequest.gameID());
-                        GameData updated = new GameData(current.gameID(), playerUsername, current.blackUsername(), current.gameName(), current.game());
+                        GameData updated = new GameData(current.gameID(), playerUsername, current.blackUsername(),
+                                current.gameName(), current.game());
                         gameDAO.updateGame(updated);
                     }
                 }
@@ -77,7 +78,8 @@ public class GameService {
                     else {
                         String playerUsername = authDAO.getAuthByAuthToken(joinGameRequest.authToken()).username();
                         GameData current = gameDAO.getGameByID(joinGameRequest.gameID());
-                        GameData updated = new GameData(current.gameID(), current.whiteUsername(), playerUsername, current.gameName(), current.game());
+                        GameData updated = new GameData(current.gameID(), current.whiteUsername(), playerUsername,
+                                current.gameName(), current.game());
                         gameDAO.updateGame(updated);
                     }
                 }

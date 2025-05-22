@@ -38,8 +38,12 @@ public class ChessPosition {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        else if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        else if (this == o) {
+            return true;
+        }
         else {
             ChessPosition other = (ChessPosition) o;
             return row == other.row && col == other.col;
