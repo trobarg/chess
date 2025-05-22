@@ -1,5 +1,4 @@
 package service;
-import java.util.HashSet;
 
 import chess.ChessGame;
 import dataaccess.*;
@@ -7,6 +6,7 @@ import model.*;
 
 import java.util.Collection;
 import java.util.Random;
+import java.util.Set;
 
 public class GameService {
     private GameDAO gameDAO;
@@ -36,7 +36,7 @@ public class GameService {
             else {//check against other games by the same name? error code 400 bad request?
                 Random rand = new Random();
                 int bound = 1000;
-                HashSet<Integer> keys = (HashSet<Integer>) gameDAO.getGameIDs();
+                Set<Integer> keys = (Set<Integer>) gameDAO.getGameIDs(); //not casting to HashSet<Integer> specifically
                 while (keys.size() * 10 >= bound) {
                     bound *= 10;
                 }
@@ -44,8 +44,9 @@ public class GameService {
                 while (keys.contains(gameID)) {
                     gameID = rand.nextInt(bound + 1);
                 }
-                GameData gameData = new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame());
-                return new CreateGameResult(gameDAO.addGame(gameData).gameID());//these two lines could be expanded for readability
+                new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame());
+                gameDAO.addGame(new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame()));
+                return new CreateGameResult(gameID); //not getting gameID from DAO
             }
         }
         catch (DataAccessException dAE) {

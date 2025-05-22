@@ -31,9 +31,9 @@ public class UserHandler {
         return new Gson().toJson(authData);
     }
     public Object logout(Request req, Response res) throws ResponseException {
-        RequestWithAuth logoutRequest = new RequestWithAuth(req.headers("authorization"));
+        RequestWithAuth logoutRequest = new RequestWithAuth(req.headers("authorization"));//only safe because nothing to deserialize?
         userService.logout(logoutRequest);
         res.status(200);
-        return new Gson().toJson(new LogoutResult());//potential to cause problems?
+        return new Gson().toJson(new LogoutResult());
     }
 }
