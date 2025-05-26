@@ -43,7 +43,7 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void clearUsers() throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
-            try (var statement = connection.prepareStatement("TRUNCATE user")) {
+            try (var statement = connection.prepareStatement("TRUNCATE users")) {
                 statement.executeUpdate();
             }
         }
