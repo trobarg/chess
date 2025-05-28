@@ -64,7 +64,7 @@ public class SQLGameDAO implements GameDAO{
     public Collection<Integer> getGameIDs() throws DataAccessException {
         HashSet<Integer> gameIDs = new HashSet<>();
         try (var connection = DatabaseManager.getConnection()) {
-            try (var statement = connection.prepareStatement("SELECT gameID FROM games")) {//not sure this works like I want
+            try (var statement = connection.prepareStatement("SELECT gameID FROM games")) {//not sure that this works like I want
                 try (var results = statement.executeQuery()) {
                     while (results.next()) {
                         gameIDs.add(results.getInt("gameID"));
@@ -107,8 +107,8 @@ public class SQLGameDAO implements GameDAO{
                 statement.setString(3, game.gameName());
                 statement.setString(4, serializeGame(game.game()));
                 statement.setInt(5, game.gameID());
-                statement.executeUpdate();
-                //need to check that something got updated?
+                int rowsUpdated = statement.executeUpdate();
+                if (rowsUpdated == 0) throw new DataAccessException("Game requested to be updated not found in database.");
                 return previousGameData;
             }
         } catch (SQLException exception) {
