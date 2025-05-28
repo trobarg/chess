@@ -5,6 +5,21 @@ import model.UserData;
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
+    public SQLUserDAO() throws DataAccessException {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException exception) {
+            throw new DataAccessException("Failed to create database", exception);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS users " +
+                    "(username VARCHAR(255) PRIMARY KEY, password VARCHAR(255), email VARCHAR(255))")) {
+                statement.executeUpdate();
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Failed to create users table", exception);
+        }
+    }
 
     @Override
     public UserData addUser(UserData user) throws DataAccessException {

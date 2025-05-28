@@ -10,6 +10,21 @@ import java.util.HashSet;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO{
+    public SQLGameDAO() throws DataAccessException {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException exception) {
+            throw new DataAccessException("Failed to create database", exception);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            try (var statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS games " +
+                    "(gameID INT PRIMARY KEY, whiteUsername VARCHAR(255), blackUsername VARCHAR(255), gameName VARCHAR(255), chessGame TEXT")) {
+                statement.executeUpdate();
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Failed to create games table", exception);
+        }
+    }
 
     @Override
     public GameData addGame(GameData game) throws DataAccessException {
