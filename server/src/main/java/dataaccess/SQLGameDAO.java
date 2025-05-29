@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-public class SQLGameDAO implements GameDAO{
+public class SQLGameDAO implements GameDAO {
     public SQLGameDAO() {
         try {
             DatabaseManager.createDatabase();
@@ -17,8 +17,13 @@ public class SQLGameDAO implements GameDAO{
             throw new RuntimeException("Failed to create database", exception);
         }
         try (var connection = DatabaseManager.getConnection()) {
-            try (var statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS games " +
-                    "(gameID INT PRIMARY KEY, whiteUsername VARCHAR(255), blackUsername VARCHAR(255), gameName VARCHAR(255), chessGame TEXT")) {
+            try (var statement = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS games (" +
+                            "gameID INT PRIMARY KEY, " +
+                            "whiteUsername VARCHAR(255), " +
+                            "blackUsername VARCHAR(255), " +
+                            "gameName VARCHAR(255), " +
+                            "chessGame TEXT)")) {
                 statement.executeUpdate();
             }
         } catch (SQLException | DataAccessException exception) {
@@ -29,7 +34,8 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public GameData addGame(GameData game) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
-            try (var statement = connection.prepareStatement("INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES(?, ?, ?, ?, ?)")) {
+            try (var statement = connection.prepareStatement("INSERT INTO games " +
+                    "(gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES(?, ?, ?, ?, ?)")) {
                 GameData previousGameData = getGameByID(game.gameID());
                 statement.setInt(1, game.gameID());
                 statement.setString(2, game.whiteUsername());
@@ -64,8 +70,7 @@ public class SQLGameDAO implements GameDAO{
                     }
                 }
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to list games", exception);
         }
         return retGames;
@@ -86,8 +91,7 @@ public class SQLGameDAO implements GameDAO{
                     }
                 }
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to get game IDs", exception);
         }
         return gameIDs;
@@ -115,7 +119,8 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public GameData updateGame(GameData game) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
-            try (var statement = connection.prepareStatement("UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, chessGame=? WHERE gameID=?")) {
+            try (var statement = connection.prepareStatement("UPDATE games SET " +
+                    "whiteUsername=?, blackUsername=?, gameName=?, chessGame=? WHERE gameID=?")) {
                 GameData previousGameData = getGameByID(game.gameID());
                 statement.setString(1, game.whiteUsername());
                 statement.setString(2, game.blackUsername());
@@ -123,7 +128,9 @@ public class SQLGameDAO implements GameDAO{
                 statement.setString(4, serializeGame(game.game()));
                 statement.setInt(5, game.gameID());
                 int rowsUpdated = statement.executeUpdate();
-                if (rowsUpdated == 0) throw new DataAccessException("Game requested to be updated not found in database.");
+                if (rowsUpdated == 0) {
+                    throw new DataAccessException("Game requested to be updated not found in database.");
+                }
                 return previousGameData;
             }
         } catch (SQLException exception) {
@@ -137,8 +144,7 @@ public class SQLGameDAO implements GameDAO{
             try (var statement = connection.prepareStatement("TRUNCATE games")) {
                 statement.executeUpdate();
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to clear games", exception);
         }
     }

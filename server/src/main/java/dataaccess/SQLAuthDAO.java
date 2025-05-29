@@ -4,7 +4,7 @@ import model.AuthData;
 
 import java.sql.SQLException;
 
-public class SQLAuthDAO implements AuthDAO{
+public class SQLAuthDAO implements AuthDAO {
     public SQLAuthDAO() {
         try {
             DatabaseManager.createDatabase();
@@ -12,8 +12,10 @@ public class SQLAuthDAO implements AuthDAO{
             throw new RuntimeException("Failed to create database", exception);
         }
         try (var connection = DatabaseManager.getConnection()) {
-            try (var statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS auths " +
-                    "(authToken VARCHAR(255) PRIMARY KEY, username VARCHAR(255))")) {
+            try (var statement = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS auths " +
+                            "(authToken VARCHAR(255) PRIMARY KEY," +
+                            " username VARCHAR(255))")) {
                 statement.executeUpdate();
             }
         } catch (SQLException | DataAccessException exception) {
@@ -31,8 +33,7 @@ public class SQLAuthDAO implements AuthDAO{
                 statement.executeUpdate();
                 return previousAuth;
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to add auth", exception);
         }
     }
@@ -48,8 +49,7 @@ public class SQLAuthDAO implements AuthDAO{
                     return new AuthData(authToken, username);
                 }
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to get auth", exception);
         }
     }
@@ -63,8 +63,7 @@ public class SQLAuthDAO implements AuthDAO{
                 statement.executeUpdate();
                 return previousAuth;
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to delete auth", exception);
         }
     }
@@ -75,8 +74,7 @@ public class SQLAuthDAO implements AuthDAO{
             try (var statement = connection.prepareStatement("TRUNCATE auths")) {
                 statement.executeUpdate();
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to clear auths", exception);
         }
     }

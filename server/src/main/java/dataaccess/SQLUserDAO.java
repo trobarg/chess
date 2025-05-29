@@ -5,7 +5,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
-public class SQLUserDAO implements UserDAO{
+public class SQLUserDAO implements UserDAO {
     public SQLUserDAO() {
         try {
             DatabaseManager.createDatabase();
@@ -13,8 +13,11 @@ public class SQLUserDAO implements UserDAO{
             throw new RuntimeException("Failed to create database", exception);
         }
         try (var connection = DatabaseManager.getConnection()) {
-            try (var statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS users " +
-                    "(username VARCHAR(255) PRIMARY KEY, password VARCHAR(255), email VARCHAR(255))")) {
+            try (var statement = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS users " +
+                            "(username VARCHAR(255) PRIMARY KEY," +
+                            " password VARCHAR(255)," +
+                            " email VARCHAR(255))")) {
                 statement.executeUpdate();
             }
         } catch (SQLException | DataAccessException exception) {
@@ -33,8 +36,7 @@ public class SQLUserDAO implements UserDAO{
                 statement.executeUpdate();
                 return previousUserData;
             }
-        }
-        catch (SQLException exception) { //not sure if it should be catching a DataAccessException instead
+        } catch (SQLException exception) { //not sure if it should be catching a DataAccessException instead
             throw new DataAccessException("Failed to add user", exception);
         }
     }
@@ -51,8 +53,7 @@ public class SQLUserDAO implements UserDAO{
                     return new UserData(username, password, email);
                 }
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to get user", exception);
         }
     }
@@ -67,8 +68,7 @@ public class SQLUserDAO implements UserDAO{
             try (var statement = connection.prepareStatement("TRUNCATE users")) {
                 statement.executeUpdate();
             }
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             throw new DataAccessException("Failed to clear users", exception);
         }
     }
