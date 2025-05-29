@@ -3,6 +3,7 @@ import java.util.UUID;
 
 import dataaccess.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private UserDAO userDAO;
@@ -34,7 +35,7 @@ public class UserService {
             if (userDAO.getUserByUsername(loginRequest.username()) == null) {
                 throw new ResponseException(401, "Error: Unauthorized");//Not some kind of username not found error?
             }
-            else if (!userDAO.getUserByUsername(loginRequest.username()).password().equals(loginRequest.password())) {
+            else if (!userDAO.getUserByUsername(loginRequest.username()).password().equals(hashPassword(loginRequest.password()))) {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
@@ -60,5 +61,9 @@ public class UserService {
         catch (DataAccessException dAE) {
             throw new ResponseException(500, dAE.getMessage());
         }
+    }
+
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 }

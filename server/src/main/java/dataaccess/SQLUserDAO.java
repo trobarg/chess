@@ -1,23 +1,24 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
 public class SQLUserDAO implements UserDAO{
-    public SQLUserDAO() throws DataAccessException {
+    public SQLUserDAO() {
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException exception) {
-            throw new DataAccessException("Failed to create database", exception);
+            throw new RuntimeException("Failed to create database", exception);
         }
         try (var connection = DatabaseManager.getConnection()) {
             try (var statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS users " +
                     "(username VARCHAR(255) PRIMARY KEY, password VARCHAR(255), email VARCHAR(255))")) {
                 statement.executeUpdate();
             }
-        } catch (SQLException exception) {
-            throw new DataAccessException("Failed to create users table", exception);
+        } catch (SQLException | DataAccessException exception) {
+            throw new RuntimeException("Failed to create users table", exception);
         }
     }
 
@@ -27,7 +28,7 @@ public class SQLUserDAO implements UserDAO{
             try (var statement = connection.prepareStatement("INSERT INTO users (username, password, email) VALUES (?, ?, ?)")) {
                 UserData previousUserData = getUserByUsername(user.username());
                 statement.setString(1, user.username());
-                statement.setString(2, user.password()); //hash password here?
+                statement.setString(2, hashPassword(user.password()));
                 statement.setString(3, user.email());
                 statement.executeUpdate();
                 return previousUserData;
@@ -54,6 +55,10 @@ public class SQLUserDAO implements UserDAO{
         catch (SQLException exception) {
             throw new DataAccessException("Failed to get user", exception);
         }
+    }
+
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     @Override

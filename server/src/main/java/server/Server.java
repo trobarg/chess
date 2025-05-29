@@ -9,15 +9,18 @@ import service.*;
 import spark.*;
 
 public class Server {
-    private final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-    private final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-    private final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-    private final GameService gameService = new GameService(memoryGameDAO, memoryAuthDAO);
-    private final UserService userService = new UserService(memoryUserDAO, memoryAuthDAO);
-    private final ClearService clearService = new ClearService(memoryUserDAO, memoryGameDAO, memoryAuthDAO);
+    private final SQLUserDAO userDAO = new SQLUserDAO();
+    private final SQLGameDAO gameDAO = new SQLGameDAO();
+    private final SQLAuthDAO authDAO = new SQLAuthDAO();
+    private final GameService gameService = new GameService(gameDAO, authDAO);
+    private final UserService userService = new UserService(userDAO, authDAO);
+    private final ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
     private final UserHandler userHandler = new UserHandler(userService);
     private final GameHandler gameHandler = new GameHandler(gameService);
     private final ClearHandler clearHandler = new ClearHandler(clearService);
+
+    public Server() {
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

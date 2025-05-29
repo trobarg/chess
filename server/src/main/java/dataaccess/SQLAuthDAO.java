@@ -5,19 +5,19 @@ import model.AuthData;
 import java.sql.SQLException;
 
 public class SQLAuthDAO implements AuthDAO{
-    public SQLAuthDAO() throws DataAccessException {
+    public SQLAuthDAO() {
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException exception) {
-            throw new DataAccessException("Failed to create database", exception);
+            throw new RuntimeException("Failed to create database", exception);
         }
         try (var connection = DatabaseManager.getConnection()) {
             try (var statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS auths " +
                     "(authToken VARCHAR(255) PRIMARY KEY, username VARCHAR(255))")) {
                 statement.executeUpdate();
             }
-        } catch (SQLException exception) {
-            throw new DataAccessException("Failed to create auths table", exception);
+        } catch (SQLException | DataAccessException exception) {
+            throw new RuntimeException("Failed to create auths table", exception);
         }
     }
 
