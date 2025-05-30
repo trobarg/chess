@@ -9,7 +9,7 @@ public class MemoryUserDAO implements UserDAO {
     @Override
     public UserData addUser(UserData user) {
         return users.put(user.username(), user);
-    }
+    } //doesn't hash password
 
     @Override
     public UserData getUserByUsername(String username) {

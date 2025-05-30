@@ -60,10 +60,6 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-//    private String hashPassword(String password) {
-//        return BCrypt.hashpw(password, BCrypt.gensalt());
-//    }
-
     @Override
     public void clearUsers() throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
