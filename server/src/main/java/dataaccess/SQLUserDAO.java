@@ -47,7 +47,9 @@ public class SQLUserDAO implements UserDAO {
             try (var statement = connection.prepareStatement("SELECT username, password, email FROM users WHERE username = ?")) {
                 statement.setString(1, username);
                 try (var result = statement.executeQuery()) {
-                    result.next();
+                    if (!result.next()) {
+                        return null;
+                    }
                     var password = result.getString("password");
                     var email = result.getString("email");
                     return new UserData(username, password, email);

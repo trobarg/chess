@@ -103,7 +103,9 @@ public class SQLGameDAO implements GameDAO {
             try (var statement = connection.prepareStatement("SELECT whiteUsername, blackUsername, gameName, chessGame FROM games WHERE gameID=?")) {
                 statement.setInt(1, gameID);
                 try (var results = statement.executeQuery()) {
-                    results.next();
+                    if (!results.next()) {
+                        return null;
+                    }
                     var whiteUsername = results.getString("whiteUsername");
                     var blackUsername = results.getString("blackUsername");
                     var gameName = results.getString("gameName");
