@@ -19,10 +19,10 @@ public class SQLGameDAO implements GameDAO {
         try (var connection = DatabaseManager.getConnection()) {
             try (var statement = connection.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS games (" +
-                            "gameID INT PRIMARY KEY, " +
+                            "gameID INT NOT NULL PRIMARY KEY, " +
                             "whiteUsername VARCHAR(255), " +
                             "blackUsername VARCHAR(255), " +
-                            "gameName VARCHAR(255), " +
+                            "gameName VARCHAR(255) NOT NULL, " +
                             "chessGame TEXT)")) {
                 statement.executeUpdate();
             }
