@@ -26,7 +26,7 @@ public class UserService {
             }
         }
         catch (DataAccessException dAE) {
-            throw new ResponseException(500, dAE.getMessage());
+            throw new ResponseException(500, "Error: " + dAE.getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ public class UserService {
             }
         }
         catch (DataAccessException dAE) {
-            throw new ResponseException(500, dAE.getMessage());
+            throw new ResponseException(500, "Error: " + dAE.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class UserService {
             }
         }
         catch (DataAccessException dAE) {
-            throw new ResponseException(500, dAE.getMessage());
+            throw new ResponseException(500, "Error: " + dAE.getMessage());
         }
     }
 }

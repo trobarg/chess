@@ -25,7 +25,7 @@ public class GameService {
             }
         }
         catch (DataAccessException dAE) {
-            throw new ResponseException(500, dAE.getMessage());
+            throw new ResponseException(500, "Error: " + dAE.getMessage());
         }
     }
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws ResponseException {
@@ -50,7 +50,7 @@ public class GameService {
             }
         }
         catch (DataAccessException dAE) {
-            throw new ResponseException(500, dAE.getMessage());
+            throw new ResponseException(500, "Error: " + dAE.getMessage());
         }
     }
     public void joinGame(JoinGameRequest joinGameRequest) throws ResponseException {
@@ -89,7 +89,7 @@ public class GameService {
             }
         }
         catch (DataAccessException dAE) {
-            throw new ResponseException(500, dAE.getMessage());
+            throw new ResponseException(500, "Error: " + dAE.getMessage());
         }
     }
 }

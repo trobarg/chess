@@ -25,7 +25,7 @@ public class ClearServiceTests {
     }
 
     @Test
-    void clearApplicationSuccess() throws DataAccessException {
+    void clearApplicationSuccess() throws DataAccessException, ResponseException {
         userDAO.addUser(new UserData("john", "pass123", "john@example.com"));
         gameDAO.addGame(new GameData(1, null, null, "TestGame", new ChessGame()));
         String token = UUID.randomUUID().toString();
