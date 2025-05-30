@@ -10,14 +10,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
 
-    private MemoryUserDAO userDAO;
-    private MemoryAuthDAO authDAO;
+    private SQLUserDAO userDAO;
+    private SQLAuthDAO authDAO;
     private UserService userService;
 
     @BeforeEach
     void setUp() {
-        userDAO = new MemoryUserDAO();
-        authDAO = new MemoryAuthDAO();
+        userDAO = new SQLUserDAO();
+        authDAO = new SQLAuthDAO();
         userService = new UserService(userDAO, authDAO);
     }
 
@@ -30,8 +30,8 @@ public class UserServiceTests {
     }
 
     @Test
-    void registerUsernameTaken() {
-        UserData user = new UserData("alice", "password123", "alice@example.com");
+    void registerUsernameTaken() throws DataAccessException {
+        UserData user = new UserData("allison", "password123", "allison@example.com");
         userDAO.addUser(user);
 
         ResponseException ex = assertThrows(ResponseException.class, () -> userService.register(user));
@@ -41,7 +41,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void loginSuccess() throws ResponseException {
+    void loginSuccess() throws ResponseException, DataAccessException {
         userDAO.addUser(new UserData("bob", "secretpassword", "bob@example.com"));
 
         AuthData result = userService.login(new LoginRequest("bob", "secretpassword"));
@@ -51,8 +51,8 @@ public class UserServiceTests {
     }
 
     @Test
-    void loginWrongPassword() {
-        userDAO.addUser(new UserData("bob", "correctpassword", "bob@example.com"));
+    void loginWrongPassword() throws DataAccessException {
+        userDAO.addUser(new UserData("bobby", "correctpassword", "bobby@example.com"));
 
         LoginRequest request = new LoginRequest("bob", "wrongpassword");
 
@@ -73,7 +73,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void logoutSuccess() throws ResponseException {
+    void logoutSuccess() throws ResponseException, DataAccessException {
         String token = UUID.randomUUID().toString();
         authDAO.addAuth(new AuthData(token, "carol"));
 

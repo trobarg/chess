@@ -11,16 +11,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ClearServiceTests {
 
-    private MemoryUserDAO userDAO;
-    private MemoryGameDAO gameDAO;
-    private MemoryAuthDAO authDAO;
+    private SQLUserDAO userDAO;
+    private SQLGameDAO gameDAO;
+    private SQLAuthDAO authDAO;
     private ClearService clearService;
 
     @BeforeEach
     void setUp() {
-        userDAO = new MemoryUserDAO();
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+        userDAO = new SQLUserDAO();
+        gameDAO = new SQLGameDAO();
+        authDAO = new SQLAuthDAO();
         clearService = new ClearService(userDAO, gameDAO, authDAO);
     }
 

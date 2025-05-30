@@ -11,26 +11,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTests {
 
-    private MemoryGameDAO gameDAO;
-    private MemoryAuthDAO authDAO;
+    private SQLGameDAO gameDAO;
+    private SQLAuthDAO authDAO;
     private GameService gameService;
 
     @BeforeEach
     void setUp() {
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+        gameDAO = new SQLGameDAO();
+        authDAO = new SQLAuthDAO();
         gameService = new GameService(gameDAO, authDAO);
     }
 
     @Test
-    void listGamesSuccess() throws ResponseException {
+    void listGamesSuccess() throws ResponseException, DataAccessException {
         String token = UUID.randomUUID().toString();
         authDAO.addAuth(new AuthData(token, "user1"));
-        gameDAO.addGame(new GameData(1, null, null, "Test Game", new ChessGame()));
+        Collection<GameData> result1 = gameService.listGames(new RequestWithAuth(token));
 
-        Collection<GameData> result = gameService.listGames(new RequestWithAuth(token));
+        gameDAO.addGame(new GameData(10, null, null, "Test Game", new ChessGame()));
 
-        assertEquals(1, result.size());
+        Collection<GameData> result2 = gameService.listGames(new RequestWithAuth(token));
+
+        assertEquals(result1.size() + 1, result2.size());
     }
 
     @Test
@@ -44,7 +46,7 @@ public class GameServiceTests {
     }
 
     @Test
-    void createGameSuccess() throws ResponseException {
+    void createGameSuccess() throws ResponseException, DataAccessException {
         String token = UUID.randomUUID().toString();
         authDAO.addAuth(new AuthData(token, "creator"));
 
@@ -66,39 +68,39 @@ public class GameServiceTests {
     }
 
     @Test
-    void joinGameWhiteSuccess() throws ResponseException {
+    void joinGameWhiteSuccess() throws ResponseException, DataAccessException {
         String token = UUID.randomUUID().toString();
         authDAO.addAuth(new AuthData(token, "whitePlayer"));
-        GameData game = new GameData(1, null, null, "Joinable Game", new ChessGame());
+        GameData game = new GameData(20, null, null, "Joinable Game", new ChessGame());
         gameDAO.addGame(game);
 
-        JoinGameRequest request = new JoinGameRequest(token, "WHITE", 1);
+        JoinGameRequest request = new JoinGameRequest(token, "WHITE", 20);
         gameService.joinGame(request);
 
-        assertEquals("whitePlayer", gameDAO.getGameByID(1).whiteUsername());
+        assertEquals("whitePlayer", gameDAO.getGameByID(20).whiteUsername());
     }
 
     @Test
-    void joinGameBlackSuccess() throws ResponseException {
+    void joinGameBlackSuccess() throws ResponseException, DataAccessException {
         String token = UUID.randomUUID().toString();
         authDAO.addAuth(new AuthData(token, "blackPlayer"));
-        GameData game = new GameData(2, null, null, "Joinable Game", new ChessGame());
+        GameData game = new GameData(30, null, null, "Joinable Game", new ChessGame());
         gameDAO.addGame(game);
 
-        JoinGameRequest request = new JoinGameRequest(token, "BLACK", 2);
+        JoinGameRequest request = new JoinGameRequest(token, "BLACK", 30);
         gameService.joinGame(request);
 
-        assertEquals("blackPlayer", gameDAO.getGameByID(2).blackUsername());
+        assertEquals("blackPlayer", gameDAO.getGameByID(30).blackUsername());
     }
 
     @Test
-    void joinGameAlreadyTaken() {
+    void joinGameAlreadyTaken() throws DataAccessException {
         String token = UUID.randomUUID().toString();
         authDAO.addAuth(new AuthData(token, "player"));
-        GameData game = new GameData(3, "someone", null, "Taken Game", new ChessGame());
+        GameData game = new GameData(40, "someone", null, "Taken Game", new ChessGame());
         gameDAO.addGame(game);
 
-        JoinGameRequest request = new JoinGameRequest(token, "WHITE", 3);
+        JoinGameRequest request = new JoinGameRequest(token, "WHITE", 40);
 
         ResponseException ex = assertThrows(ResponseException.class, () -> gameService.joinGame(request));
 
@@ -107,10 +109,10 @@ public class GameServiceTests {
     }
 
     @Test
-    void joinGameInvalidColor() {
+    void joinGameInvalidColor() throws DataAccessException {
         String token = UUID.randomUUID().toString();
         authDAO.addAuth(new AuthData(token, "player"));
-        GameData game = new GameData(4, null, null, "Bad Color Game", new ChessGame());
+        GameData game = new GameData(50, null, null, "Bad Color Game", new ChessGame());
         gameDAO.addGame(game);
 
         JoinGameRequest request = new JoinGameRequest(token, "BLUE", 4);
