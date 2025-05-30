@@ -31,7 +31,7 @@ public class SQLUserDAO implements UserDAO {
             try (var statement = connection.prepareStatement("INSERT INTO users (username, password, email) VALUES (?, ?, ?)")) {
                 UserData previousUserData = getUserByUsername(user.username());
                 statement.setString(1, user.username());
-                statement.setString(2, hashPassword(user.password()));
+                statement.setString(2, BCrypt.hashpw(user.password(), BCrypt.gensalt()));
                 statement.setString(3, user.email());
                 statement.executeUpdate();
                 return previousUserData;
@@ -60,9 +60,9 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-    private String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
+//    private String hashPassword(String password) {
+//        return BCrypt.hashpw(password, BCrypt.gensalt());
+//    }
 
     @Override
     public void clearUsers() throws DataAccessException {
