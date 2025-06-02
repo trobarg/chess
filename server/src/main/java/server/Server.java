@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 
 import dataaccess.*;
+import exception.ResponseException;
 import handler.*;
 import model.ResponseExceptionContent;
 import service.*;

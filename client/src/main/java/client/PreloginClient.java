@@ -1,5 +1,7 @@
 package client;
 
+import exception.ResponseException;
+
 import java.util.Arrays;
 
 public class PreloginClient {
@@ -25,42 +27,37 @@ public class PreloginClient {
             };
 
 
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             return exception.getMessage();
         }
     }
 
-    private String register(String[] parameters) throws Exception { //What type of exception?
+    private String register(String[] parameters) throws ResponseException {
         if (parameters.length != 3) {
-            throw new Exception("Please provide 3 parameters: username, password, and email");
+            return "Please provide 3 parameters: username, password, and email";
         }
-        else if (server.register(parameters[0], parameters[1], parameters[2])) {
+        else {
+            server.register(parameters[0], parameters[1], parameters[2]); //catch handled in eval function
             return "Successfully registered and logged in!";
-        }
-        else { //Should this be an exception thrown as well?
-            return "Registration failed";
         }
     }
 
-    private String login(String[] parameters) throws Exception {
+    private String login(String[] parameters) throws ResponseException {
         if (parameters.length != 2) {
-            throw new Exception("Please provide 2 parameters: username and password");
-        }
-        else if (server.login(parameters[0], parameters[1])) {
-            return "Successfully logged in!";
+            return "Please provide 2 parameters: username and password";
         }
         else {
-            return "Login failed";
+            server.login(parameters[0], parameters[1]);
+            return "Successfully logged in!";
         }
     }
 
     private String help() {
         return """
-               register <USERNAME> <PASSWORD> <EMAIL> - create a new user
-               login <USERNAME> <PASSWORD> - login as an existing user
-               quit - stop playing
-               help - display this message
-               """;
+                register <USERNAME> <PASSWORD> <EMAIL> - create a new user
+                login <USERNAME> <PASSWORD> - login as an existing user
+                quit - stop playing
+                help - display this message
+                """;
     }
 }

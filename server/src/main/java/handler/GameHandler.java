@@ -1,7 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
-import service.ResponseException;
+import exception.ResponseException;
 import spark.*;
 import model.*;
 import service.GameService;

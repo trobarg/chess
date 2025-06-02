@@ -2,6 +2,7 @@ package service;
 import java.util.UUID;
 
 import dataaccess.*;
+import exception.ResponseException;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
 
