@@ -4,7 +4,7 @@ import exception.ResponseException;
 
 import java.util.Arrays;
 
-public class PreloginClient {
+public class PreloginClient implements Client {
 
     private final ServerFacade server;
     private final String serverUrl;
@@ -25,8 +25,6 @@ public class PreloginClient {
                 case "quit" -> "quit";
                 default -> help();
             };
-
-
         } catch (Exception exception) {
             return exception.getMessage();
         }

@@ -1,5 +1,6 @@
 package ui;
 
+import client.Client;
 import client.PreloginClient;
 
 import java.util.Scanner;
@@ -7,7 +8,7 @@ import java.util.Scanner;
 import static java.lang.System.out;
 
 public class REPL {
-    private final PreloginClient client; //REPL will need to change between clients
+    private Client client; //REPL will need to change between clients
 
     public REPL(String serverUrl) {
         this.client = new PreloginClient(serverUrl);
