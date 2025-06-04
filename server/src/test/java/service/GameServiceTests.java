@@ -75,7 +75,7 @@ public class GameServiceTests {
         GameData game = new GameData(20, null, null, "Joinable Game", new ChessGame());
         gameDAO.addGame(game);
 
-        JoinGameRequest request = new JoinGameRequest(token, "WHITE", 20);
+        JoinGameRequest request = new JoinGameRequest(token, 20, "WHITE");
         gameService.joinGame(request);
 
         assertEquals("whitePlayer", gameDAO.getGameByID(20).whiteUsername());
@@ -88,7 +88,7 @@ public class GameServiceTests {
         GameData game = new GameData(30, null, null, "Joinable Game", new ChessGame());
         gameDAO.addGame(game);
 
-        JoinGameRequest request = new JoinGameRequest(token, "BLACK", 30);
+        JoinGameRequest request = new JoinGameRequest(token, 30, "BLACK");
         gameService.joinGame(request);
 
         assertEquals("blackPlayer", gameDAO.getGameByID(30).blackUsername());
@@ -101,7 +101,7 @@ public class GameServiceTests {
         GameData game = new GameData(40, "someone", null, "Taken Game", new ChessGame());
         gameDAO.addGame(game);
 
-        JoinGameRequest request = new JoinGameRequest(token, "WHITE", 40);
+        JoinGameRequest request = new JoinGameRequest(token, 40, "WHITE");
 
         ResponseException ex = assertThrows(ResponseException.class, () -> gameService.joinGame(request));
 
@@ -116,7 +116,7 @@ public class GameServiceTests {
         GameData game = new GameData(50, null, null, "Bad Color Game", new ChessGame());
         gameDAO.addGame(game);
 
-        JoinGameRequest request = new JoinGameRequest(token, "BLUE", 4);
+        JoinGameRequest request = new JoinGameRequest(token, 4, "BLUE");
 
         ResponseException ex = assertThrows(ResponseException.class, () -> gameService.joinGame(request));
 
@@ -126,7 +126,7 @@ public class GameServiceTests {
 
     @Test
     void joinGameUnauthorized() {
-        JoinGameRequest request = new JoinGameRequest("bad-token", "WHITE", 5);
+        JoinGameRequest request = new JoinGameRequest("bad-token", 5, "WHITE");
 
         ResponseException ex = assertThrows(ResponseException.class, () -> gameService.joinGame(request));
 

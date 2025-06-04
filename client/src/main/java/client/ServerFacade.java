@@ -14,8 +14,8 @@ public class ServerFacade {
         this.serverURL = serverURL;
         this.httpCommunicator = new HTTPCommunicator(serverURL, this);
     }
-
-    public void register(String username, String password, String email) throws ResponseException {//not sure what to return
+    //methods should take in a request object and return a result object?
+    public void register(String username, String password, String email) throws ResponseException {//return a RegisterResult?
         RegisterRequest registerRequest = new RegisterRequest(username, password, email);
         AuthData response = httpCommunicator.makeRequest("POST", "/user", registerRequest, AuthData.class);
         authToken = response.authToken();
@@ -46,7 +46,7 @@ public class ServerFacade {
     }
 
     public void joinGame(int gameID, String color) throws ResponseException {
-        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, color, gameID); //mismatched order of variables
+        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, gameID, color); //mismatched order of variables
         httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, null);
     }
 

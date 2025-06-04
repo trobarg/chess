@@ -8,12 +8,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class PostloginClient implements Client {
+    private boolean loggedIn = true;
     private final ServerFacade server;
-    private final String serverUrl;
 
-    public PostloginClient(String serverUrl) {
-        this.serverUrl = serverUrl;
-        this.server = new ServerFacade(serverUrl);
+    public PostloginClient(ServerFacade server) {
+        this.server = server;
     }
 
     public String eval(String input) {
@@ -97,4 +96,7 @@ public class PostloginClient implements Client {
                """;
     }
 
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
 }

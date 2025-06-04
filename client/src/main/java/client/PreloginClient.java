@@ -5,13 +5,11 @@ import exception.ResponseException;
 import java.util.Arrays;
 
 public class PreloginClient implements Client {
-
+    private boolean loggedOut = true; //what about an int that decides forward or backwards progression?
     private final ServerFacade server;
-    private final String serverUrl;
 
-    public PreloginClient(String serverUrl) {
-        this.serverUrl = serverUrl;
-        this.server = new ServerFacade(serverUrl);
+    public PreloginClient(ServerFacade server) {
+        this.server = server;
     }
 
     public String eval(String input) {
@@ -57,5 +55,9 @@ public class PreloginClient implements Client {
                 quit - stop playing
                 help - display this message
                 """;
+    }
+
+    public boolean isLoggedOut() {
+        return loggedOut;
     }
 }
