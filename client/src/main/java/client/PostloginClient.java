@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class PostloginClient implements Client {
-    private boolean loggedIn = true;
+    private int changeClientLayer = 0;
     private final ServerFacade server;
 
     public PostloginClient(ServerFacade server) {
@@ -37,6 +37,7 @@ public class PostloginClient implements Client {
 
     private String logout() throws ResponseException {
         server.logout();
+        changeClientLayer = -1;
         return "Successfully logged out!";
     }
 
@@ -70,6 +71,7 @@ public class PostloginClient implements Client {
         }
         else {
             server.joinGame(Integer.parseInt(parameters[0]), parameters[1]);
+            changeClientLayer = 1;
             return "Successfully joined game!";
         }
     }
@@ -80,6 +82,7 @@ public class PostloginClient implements Client {
         }
         else {
             // don't think the program actually supports observing games yet
+            changeClientLayer = 1;
             return "Observing game!";
         }
     }
@@ -91,12 +94,12 @@ public class PostloginClient implements Client {
                 join <ID> [WHITE|BLACK] - join a game as color
                 observe <ID> - observe a game
                 logout - log out of current user
-                quit - stop playing
+                quit - quit the program
                 help - display this message
                """;
     }
 
-    public boolean isLoggedIn() {
-        return loggedIn;
+    public int changeClientLayer() {
+        return changeClientLayer;
     }
 }

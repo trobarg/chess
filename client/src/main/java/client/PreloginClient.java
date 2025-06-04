@@ -5,7 +5,7 @@ import exception.ResponseException;
 import java.util.Arrays;
 
 public class PreloginClient implements Client {
-    private boolean loggedOut = true; //what about an int that decides forward or backwards progression?
+    private int changeClientLayer = 0;
     private final ServerFacade server;
 
     public PreloginClient(ServerFacade server) {
@@ -34,6 +34,7 @@ public class PreloginClient implements Client {
         }
         else {
             server.register(parameters[0], parameters[1], parameters[2]); //catch handled in eval function
+            changeClientLayer = 1;
             return "Successfully registered and logged in!";
         }
     }
@@ -44,6 +45,7 @@ public class PreloginClient implements Client {
         }
         else {
             server.login(parameters[0], parameters[1]);
+            changeClientLayer = 1;
             return "Successfully logged in!";
         }
     }
@@ -52,12 +54,12 @@ public class PreloginClient implements Client {
         return """
                 register <USERNAME> <PASSWORD> <EMAIL> - create a new user
                 login <USERNAME> <PASSWORD> - login as an existing user
-                quit - stop playing
+                quit - quit the program
                 help - display this message
                 """;
     }
 
-    public boolean isLoggedOut() {
-        return loggedOut;
+    public int changeClientLayer() {
+        return changeClientLayer;
     }
 }

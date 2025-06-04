@@ -1,4 +1,5 @@
 import chess.*;
+import client.ServerFacade;
 import ui.REPL;
 
 public class Main {
@@ -7,6 +8,6 @@ public class Main {
         if (args.length == 1) {
             serverUrl = args[0];
         }
-        new REPL(serverUrl).run();
+        new REPL(new ServerFacade(serverUrl)).run();
     }
 }
