@@ -45,7 +45,7 @@ public class PostloginClient implements Client {
         HashSet<GameData> games = server.listGames();
         StringBuilder sb = new StringBuilder();
         for (GameData game : games) {
-            int id = game.gameID();
+            int id = game.gameID(); //games not to be numbered by their actual IDs
             String whiteUser = game.whiteUsername() != null ? game.whiteUsername() : "open";
             String blackUser = game.blackUsername() != null ? game.blackUsername() : "open";
             sb.append(String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s%n",
@@ -55,7 +55,7 @@ public class PostloginClient implements Client {
     }
 
 
-    private String create(String[] parameters) throws ResponseException { //do these have to be arrays of Strings?
+    private String create(String[] parameters) throws ResponseException {
         if (parameters.length != 1) {
             return "Please provide 1 parameter: game name";
         }

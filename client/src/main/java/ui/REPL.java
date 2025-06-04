@@ -8,16 +8,22 @@ import static java.lang.System.out;
 
 public class REPL {
     private Client client;
-    //should there be three client objects which are assigned to client?
+    private final PreloginClient preloginClient;
+    private final PostloginClient postloginClient;
+    private final GameplayClient gameplayClient;
     private final ServerFacade server;
 
     public REPL(ServerFacade server) {
-        this.client = new PreloginClient(server);
+        preloginClient = new PreloginClient(server);
+        postloginClient = new PostloginClient(server);
+        gameplayClient = new GameplayClient(server);
+        client = preloginClient;
         this.server = server;
     }
 
     public void run() {
-        out.println("Welcome to the Chess Client! Sign in to get started.");
+        out.println("Welcome to the Chess Client! Enter help to get started.");
+
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
@@ -28,21 +34,21 @@ public class REPL {
                 int changeClientLayer = client.changeClientLayer();
                 if (changeClientLayer != 0) {
                     switch (client) {
-                        case PreloginClient preloginClient -> {
+                        case PreloginClient ignored -> {
                             if (changeClientLayer == 1) { //nesting depth issue?
-                                client = new PostloginClient(server);
+                                client = postloginClient;
                             }
                         }
-                        case PostloginClient postloginClient -> {
+                        case PostloginClient ignored -> {
                             if (changeClientLayer == 1) {
-                                client = new GameplayClient(server);
+                                client = gameplayClient;
                             } else if (changeClientLayer == -1) {
-                                client = new PreloginClient(server);
+                                client = preloginClient;
                             }
                         }
-                        case GameplayClient gameplayClient -> {
+                        case GameplayClient ignored -> {
                             if (changeClientLayer == -1) {
-                                client = new PostloginClient(server);
+                                client = postloginClient;
                             }
                         }
                         case null, default -> throw new Exception("Invalid client layer change");
@@ -54,5 +60,6 @@ public class REPL {
             }
             out.println();
         }
+        out.println("Goodbye!");
     }
 }

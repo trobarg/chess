@@ -14,40 +14,40 @@ public class ServerFacade {
         this.serverURL = serverURL;
         this.httpCommunicator = new HTTPCommunicator(serverURL, this);
     }
-    //methods should take in a request object and return a result object?
-    public void register(String username, String password, String email) throws ResponseException {//return a RegisterResult?
+
+    public AuthData register(String username, String password, String email) throws ResponseException {
         RegisterRequest registerRequest = new RegisterRequest(username, password, email);
-        AuthData response = httpCommunicator.makeRequest("POST", "/user", registerRequest, AuthData.class);
+        AuthData response = httpCommunicator.makeRequest("POST", "/user", registerRequest, null, AuthData.class);
         authToken = response.authToken();
+        return response;
     }
-    public void login(String username, String password) throws ResponseException {
+    public AuthData login(String username, String password) throws ResponseException {
         LoginRequest loginRequest = new LoginRequest(username, password);
-        AuthData response = httpCommunicator.makeRequest("POST", "/session", loginRequest, AuthData.class);
+        AuthData response = httpCommunicator.makeRequest("POST", "/session", loginRequest, null, AuthData.class);
         authToken = response.authToken();
+        return response;
     }
 
     public void logout() throws ResponseException {
-        RequestWithAuth requestWithAuth = new RequestWithAuth(authToken);
-        httpCommunicator.makeRequest("DELETE", "/session", requestWithAuth, null);//how will this get the authToken into the header?
+        httpCommunicator.makeRequest("DELETE", "/session", null, authToken, null);
         authToken = null;
     }
 
     public HashSet<GameData> listGames() throws ResponseException {
-        RequestWithAuth requestWithAuth = new RequestWithAuth(authToken);
-        record ListGamesResponse(HashSet<GameData> games) {
+        record GamesWrapper(HashSet<GameData> games) {
         }
-        ListGamesResponse response = httpCommunicator.makeRequest("GET", "/game", requestWithAuth, ListGamesResponse.class); //need a wrapper class for the HashSet?
+        GamesWrapper response = httpCommunicator.makeRequest("GET", "/game", null, authToken, GamesWrapper.class);
         return response.games();
     }
 
     public CreateGameResult createGame(String gameName) throws ResponseException {
-        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
-        return httpCommunicator.makeRequest("POST", "/game", createGameRequest, CreateGameResult.class);
+        CreateGameRequest createGameRequest = new CreateGameRequest(null, gameName); //this could be hard to deserialize correctly
+        return httpCommunicator.makeRequest("POST", "/game", createGameRequest, authToken, CreateGameResult.class);
     }
 
     public void joinGame(int gameID, String color) throws ResponseException {
-        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, gameID, color); //mismatched order of variables
-        httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, null);
+        JoinGameRequest joinGameRequest = new JoinGameRequest(null, gameID, color);
+        httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, authToken, null);
     }
 
 }

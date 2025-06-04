@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import model.ResponseExceptionContent;
 
 import java.io.*;
 import java.net.*;
@@ -16,12 +17,15 @@ public class HTTPCommunicator {
         this.server = server;
     }
 
-    public <T> T makeRequest(String method, String path, Object requestBody, Class<T> responseClass) throws ResponseException {
+    public <T> T makeRequest(String method, String path, Object requestBody, String authToken, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverURL + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+            if (authToken != null && !authToken.isEmpty()) {
+                http.setRequestProperty("Authorization", authToken);
+            }
             writeBody(requestBody, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -30,6 +34,7 @@ public class HTTPCommunicator {
             throw new ResponseException(500, ex.getMessage());
         }
     }
+
 
     private void writeBody(Object requestBody, HttpURLConnection http) throws IOException {
         if (requestBody != null) {
@@ -42,11 +47,30 @@ public class HTTPCommunicator {
     }
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
-        var status = http.getResponseCode();
+        int status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
+            String errorMessage = "HTTP Error " + status;
+            try (InputStream errorStream = http.getErrorStream()) {
+                if (errorStream != null) {
+                    try (InputStreamReader isr = new InputStreamReader(errorStream);
+                         BufferedReader reader = new BufferedReader(isr)) {
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        String jsonString = sb.toString();
+                        ResponseExceptionContent content = new Gson().fromJson(jsonString, ResponseExceptionContent.class);
+                        if (content != null && content.message() != null) {//check that message isn't ""?
+                            errorMessage = content.message();
+                        }
+                    }
+                }
+            }
+            throw new ResponseException(status, errorMessage);
         }
     }
+
 
     private <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;
