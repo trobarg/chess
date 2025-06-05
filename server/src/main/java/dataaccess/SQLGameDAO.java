@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import model.GameData;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -56,7 +57,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        HashSet<GameData> retGames = new HashSet<>(); //maybe SQL table should be called game, not games?
+        ArrayList<GameData> retGames = new ArrayList<>(); //maybe SQL table should be called game, not games?
         try (var connection = DatabaseManager.getConnection()) {
             try (var statement = connection.prepareStatement("SELECT * FROM games")) {
                 try (var results = statement.executeQuery()) {

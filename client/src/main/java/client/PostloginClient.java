@@ -4,8 +4,7 @@ import exception.ResponseException;
 import model.CreateGameResult;
 import model.GameData;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
 public class PostloginClient implements Client {
     private int changeClientLayer = 0;
@@ -42,14 +41,15 @@ public class PostloginClient implements Client {
     }
 
     private String list() throws ResponseException {
-        HashSet<GameData> games = server.listGames();
+        ArrayList<GameData> gamesList = (ArrayList<GameData>) server.listGames();
         StringBuilder sb = new StringBuilder();
-        for (GameData game : games) {
-            int id = game.gameID(); //games not to be numbered by their actual IDs
+        int i = 1;
+        for (GameData game : gamesList) {
             String whiteUser = game.whiteUsername() != null ? game.whiteUsername() : "open";
             String blackUser = game.blackUsername() != null ? game.blackUsername() : "open";
             sb.append(String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s%n",
-                    id, game.gameName(), whiteUser, blackUser));
+                    i, game.gameName(), whiteUser, blackUser));
+            i++;
         }
         return sb.toString();
     }
