@@ -40,6 +40,12 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void registerDuplicateUsername() throws ResponseException {
+        serverFacade.register("testUserDuplicate", "password", "duplicate@mail.com");
+        assertThrows(ResponseException.class, () -> serverFacade.register("testUserDuplicate", "password", "duplicate@mail.com"));
+    }
+
+    @Test
     public void loginSuccess() throws ResponseException {
         serverFacade.register("testUser2", "password2", "testUser2@mail.com");
         AuthData response = serverFacade.login("testUser2", "password2");
@@ -48,10 +54,23 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void loginBadPassword() throws ResponseException {
+        serverFacade.register("correctUser", "correctPassword", "wrong@mail.com");
+        assertThrows(ResponseException.class, () -> serverFacade.login("correctUser", "wrongPassword"));
+    }
+
+    @Test
     public void logoutSuccess() throws ResponseException {
         serverFacade.register("testUser3", "password3", "testUser3@mail.com");
         serverFacade.logout();
         assertThrows(ResponseException.class, () -> serverFacade.listGames());
+    }
+
+    @Test
+    public void logoutWhileLoggedOut () throws ResponseException {
+        serverFacade.register("userToLogOut", "password", "logout@mail.com");
+        serverFacade.logout();
+        assertThrows(ResponseException.class, () -> serverFacade.logout());
     }
 
     @Test
@@ -68,11 +87,29 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void listGamesWhileLoggedOut() throws ResponseException {
+        serverFacade.register("userToList","password","lister@mail.com");
+        assertThrows(ResponseException.class, () -> {
+            serverFacade.logout();
+            serverFacade.listGames();
+        });
+    }
+
+    @Test
     public void createGameSuccess() throws ResponseException {
         serverFacade.register("testUser5", "password5", "testUser5@mail.com");
         CreateGameResult response = serverFacade.createGame("testGame2");
         assertNotNull(response);
         assertTrue(response.gameID() >= 0);
+    }
+
+    @Test
+    public void createGameWhileLoggedOut() throws ResponseException {
+        serverFacade.register("userToGame", "password", "gamer@mail.com");
+        assertThrows(ResponseException.class, () -> {
+            serverFacade.logout();
+            serverFacade.createGame("shouldFailGame");
+        });
     }
 
     @Test
@@ -97,4 +134,20 @@ public class ServerFacadeTests {
         assertTrue(whiteUsernames.contains("testUser6"));
     }
 
+    @Test
+    public void joinGameInvalidColor() throws ResponseException {
+        serverFacade.register("purpleUser", "purplePassword", "purple@mail.com");
+        serverFacade.createGame("badColorGame");
+        ArrayList<GameData> games = (ArrayList<GameData>) serverFacade.listGames();
+        int i = 1;
+        for (GameData game : games) {
+            if (game.gameName() != null && game.gameName().equals("badColorGame")) {
+                int finalI = i;
+                assertThrows(ResponseException.class, () -> serverFacade.joinGame(finalI, "PURPLE"));
+            }
+            else {
+                i++;
+            }
+        }
+    }
 }
