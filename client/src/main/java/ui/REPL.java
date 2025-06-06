@@ -29,36 +29,7 @@ public class REPL {
             try {
                 result = client.eval(line);
                 out.print(result);
-                int changeClientLayer = client.getChangeClientLayer();
-                if (changeClientLayer != 0) {
-                    switch (client) {
-                        case PreloginClient ignored -> {
-                            if (changeClientLayer == 1) { //nesting depth issue?
-                                client.resetChangeClientLayer();
-                                client = postloginClient;
-                            }
-                        }
-                        case PostloginClient ignored -> {
-                            if (changeClientLayer == 1) {
-                                client.resetChangeClientLayer();
-                                out.println();
-                                gameplayClient = new GameplayClient(server, postloginClient.getTargetGameIndex(),
-                                        postloginClient.getTargetGameColor());
-                                client = gameplayClient;
-                            } else if (changeClientLayer == -1) {
-                                client.resetChangeClientLayer();
-                                client = preloginClient;
-                            }
-                        }
-                        case GameplayClient ignored -> {
-                            if (changeClientLayer == -1) {
-                                client.resetChangeClientLayer();
-                                client = postloginClient;
-                            }
-                        }
-                        case null, default -> throw new Exception("Invalid client layer change");
-                    }
-                }
+                checkChangeClientLayer();
             }
             catch (Exception exception) {
                 out.print(exception.getMessage());
@@ -66,5 +37,38 @@ public class REPL {
             out.println();
         }
         out.println("Goodbye!");
+    }
+
+    private void checkChangeClientLayer() throws Exception {
+        int changeClientLayer = client.getChangeClientLayer();
+        if (changeClientLayer != 0) {
+            switch (client) {
+                case PreloginClient ignored -> {
+                    if (changeClientLayer == 1) {
+                        client.resetChangeClientLayer();
+                        client = postloginClient;
+                    }
+                }
+                case PostloginClient ignored -> {
+                    if (changeClientLayer == 1) {
+                        client.resetChangeClientLayer();
+                        out.println();
+                        gameplayClient = new GameplayClient(server, postloginClient.getTargetGameIndex(),
+                                postloginClient.getTargetGameColor());
+                        client = gameplayClient;
+                    } else if (changeClientLayer == -1) {
+                        client.resetChangeClientLayer();
+                        client = preloginClient;
+                    }
+                }
+                case GameplayClient ignored -> {
+                    if (changeClientLayer == -1) {
+                        client.resetChangeClientLayer();
+                        client = postloginClient;
+                    }
+                }
+                case null, default -> throw new Exception("Invalid client layer change");
+            }
+        }
     }
 }

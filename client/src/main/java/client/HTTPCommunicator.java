@@ -12,8 +12,8 @@ public class HTTPCommunicator {
     private final String serverURL;
     private final ServerFacade server;
 
-    public HTTPCommunicator(String URL, ServerFacade server) {
-        this.serverURL = URL; //needs https:// prefix?
+    public HTTPCommunicator(String url, ServerFacade server) {
+        this.serverURL = url; //needs https:// prefix?
         this.server = server;
     }
 
@@ -52,22 +52,25 @@ public class HTTPCommunicator {
             String errorMessage = "HTTP Error " + status;
             try (InputStream errorStream = http.getErrorStream()) {
                 if (errorStream != null) {
-                    try (InputStreamReader isr = new InputStreamReader(errorStream);
-                         BufferedReader reader = new BufferedReader(isr)) {
-                        StringBuilder sb = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            sb.append(line);
-                        }
-                        String jsonString = sb.toString();
-                        ResponseExceptionContent content = new Gson().fromJson(jsonString, ResponseExceptionContent.class);
-                        if (content != null && content.message() != null) {//check that message isn't ""?
-                            errorMessage = content.message();
-                        }
+                    ResponseExceptionContent content = parseErrorContents(errorStream);
+                    if (content != null && content.message() != null) {//check that message isn't ""?
+                        errorMessage = content.message();
                     }
                 }
             }
             throw new ResponseException(status, errorMessage);
+        }
+    }
+
+    private ResponseExceptionContent parseErrorContents(InputStream errorStream) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(errorStream))) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            String jsonString = sb.toString();
+            return new Gson().fromJson(jsonString, ResponseExceptionContent.class);
         }
     }
 
