@@ -1,6 +1,5 @@
 package client;
 
-import chess.*;
 import exception.ResponseException;
 import model.*;
 

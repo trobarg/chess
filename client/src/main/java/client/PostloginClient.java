@@ -2,7 +2,6 @@ package client;
 
 import chess.ChessGame;
 import exception.ResponseException;
-import model.CreateGameResult;
 import model.GameData;
 
 import java.util.*;
