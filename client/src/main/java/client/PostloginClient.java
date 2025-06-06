@@ -72,6 +72,12 @@ public class PostloginClient implements Client {
         if (parameters.length != 2) {
             return "Please provide 2 parameters: game number and color";
         }
+        else if (!parameters[0].matches("[1-9]\\d*")) {
+            return "Please provide a positive integer for game number";
+        }
+        else if (!parameters[1].toUpperCase().matches("WHITE|BLACK")) {
+            return "Please provide white or black for team color";
+        }
         else {
             server.joinGame(Integer.parseInt(parameters[0]), parameters[1]);
             changeClientLayer = 1;
