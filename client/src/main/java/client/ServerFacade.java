@@ -1,5 +1,6 @@
 package client;
 
+import chess.*;
 import exception.ResponseException;
 import model.*;
 
@@ -48,7 +49,7 @@ public class ServerFacade {
 
     public void joinGame(int gameNumber, String color) throws ResponseException {
         refreshGames();
-        JoinGameRequest joinGameRequest = new JoinGameRequest(null, games.get(gameNumber - 1).gameID(), color);
+        JoinGameRequest joinGameRequest = new JoinGameRequest(null, getGameDataByNumber(gameNumber).gameID(), color);
         httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, authToken, null);
     }
 
@@ -62,8 +63,12 @@ public class ServerFacade {
         games.retainAll(response.games());
         return response;
     }
-    protected GameData getGameAtIndex(int index) throws ResponseException {
+    protected List<GameData> getGames() throws ResponseException {
         refreshGames();
-        return games.get(index);
+        return games;
+    }
+    protected GameData getGameDataByNumber (int index) throws ResponseException {
+        refreshGames();
+        return games.get(index - 1);
     }
 }

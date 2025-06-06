@@ -16,7 +16,7 @@ public class GameplayClient implements Client {
     public GameplayClient(ServerFacade server, int gameNumber, ChessGame.TeamColor teamColor) throws ResponseException {
         this.server = server;
         this.teamColor = teamColor;
-        this.game = server.getGameAtIndex(gameNumber - 1).game();
+        this.game = server.getGameDataByNumber(gameNumber).game();
         boardPrinter = new BoardPrinter(this.game);
         boardPrinter.printBoard(this.teamColor, null);
     }

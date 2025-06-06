@@ -45,6 +45,9 @@ public class PostloginClient implements Client {
 
     private String list() throws ResponseException {
         ArrayList<GameData> gamesList = (ArrayList<GameData>) server.listGames();
+        if (gamesList.isEmpty()) {
+            return "No games to list";
+        }
         StringBuilder sb = new StringBuilder();
         int i = 1;
         for (GameData game : gamesList) {
@@ -75,6 +78,9 @@ public class PostloginClient implements Client {
         else if (!parameters[0].matches("[1-9]\\d*")) {
             return "Please provide a positive integer for game number";
         }
+        else if (Integer.parseInt(parameters[0]) > server.getGames().size()) {
+            return "Game number provided exceeds current number of games";
+        }
         else if (!parameters[1].toUpperCase().matches("WHITE|BLACK")) {
             return "Please provide white or black for team color";
         }
@@ -87,9 +93,15 @@ public class PostloginClient implements Client {
         }
     }
 
-    private String observe(String[] parameters) {
+    private String observe(String[] parameters) throws ResponseException {
         if (parameters.length != 1) {
             return "Please provide 1 parameter: game number";
+        }
+        else if (!parameters[0].matches("[1-9]\\d*")) {
+            return "Please provide a positive integer for game number";
+        }
+        else if (Integer.parseInt(parameters[0]) > server.getGames().size()) {
+            return "Game number provided exceeds current number of games";
         }
         else {
             // don't think the program actually supports observing games yet
