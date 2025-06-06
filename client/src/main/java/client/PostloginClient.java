@@ -63,8 +63,8 @@ public class PostloginClient implements Client {
             return "Please provide 1 parameter: game name";
         }
         else {
-            CreateGameResult createGameResult = server.createGame(parameters[0]);
-            return "Successfully created game!"; //is the gameID needed past this point?
+            server.createGame(parameters[0]);
+            return "Successfully created game!";
         }
     }
 
