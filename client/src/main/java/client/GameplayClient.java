@@ -1,13 +1,24 @@
 package client;
 
+import chess.ChessGame;
+import exception.ResponseException;
+import ui.BoardPrinter;
+
 import java.util.Arrays;
 
 public class GameplayClient implements Client {
     private int changeClientLayer = 0;
+    private final ChessGame game; //not strictly certain this is necessary
+    private final ChessGame.TeamColor teamColor;
+    private final BoardPrinter boardPrinter;
     private final ServerFacade server;
 
-    public GameplayClient(ServerFacade server) {
+    public GameplayClient(ServerFacade server, int gameNumber, ChessGame.TeamColor teamColor) throws ResponseException {
         this.server = server;
+        this.teamColor = teamColor;
+        this.game = server.getGameAtIndex(gameNumber - 1).game();
+        boardPrinter = new BoardPrinter(this.game);
+        boardPrinter.printBoard(this.teamColor, null);
     }
 
     public String eval(String input) {
@@ -29,7 +40,6 @@ public class GameplayClient implements Client {
     private String leave() {
         changeClientLayer = -1;
         return "Successfully left game!";
-
     }
 
     private String help() {
@@ -40,7 +50,11 @@ public class GameplayClient implements Client {
                """;
     }
 
-    public int changeClientLayer() {
+    public int getChangeClientLayer() {
         return changeClientLayer;
+    }
+
+    public void resetChangeClientLayer() {
+        changeClientLayer = 0;
     }
 }

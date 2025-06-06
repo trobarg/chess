@@ -8,7 +8,7 @@ import java.util.*;
 public class ServerFacade {
     private final String serverURL;
     private final HTTPCommunicator httpCommunicator;
-    private final ArrayList<Integer> gameIDs = new ArrayList<>();
+    private final ArrayList<GameData> games = new ArrayList<>();
     private String authToken;
 
     public ServerFacade(String serverURL) {
@@ -35,38 +35,35 @@ public class ServerFacade {
     }
 
     public Collection<GameData> listGames() throws ResponseException {
-        GamesList response = refreshGameIDs();
+        GamesList response = refreshGames();
         return response.games();
     }
 
     public CreateGameResult createGame(String gameName) throws ResponseException {
-        refreshGameIDs();
         CreateGameRequest createGameRequest = new CreateGameRequest(null, gameName); //this could be hard to deserialize correctly
         CreateGameResult createGameResult = httpCommunicator.makeRequest("POST", "/game", createGameRequest, authToken, CreateGameResult.class);
-        gameIDs.add(createGameResult.gameID());
+        refreshGames();
         return createGameResult;
     }
 
-    public void joinGame(int gameID, String color) throws ResponseException {
-        refreshGameIDs();
-        JoinGameRequest joinGameRequest = new JoinGameRequest(null, gameIDs.get(gameID), color);
+    public void joinGame(int gameNumber, String color) throws ResponseException {
+        refreshGames();
+        JoinGameRequest joinGameRequest = new JoinGameRequest(null, games.get(gameNumber - 1).gameID(), color);
         httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, authToken, null);
     }
 
-    private GamesList refreshGameIDs () throws ResponseException {
+    private GamesList refreshGames() throws ResponseException {
         GamesList response = httpCommunicator.makeRequest("GET", "/game", null, authToken, GamesList.class);
-        ArrayList<Integer> providedIDs = new ArrayList<>();
         for (GameData game : response.games()) {
-            providedIDs.add(game.gameID());
-            if (!gameIDs.contains(game.gameID())) {
-                gameIDs.add(game.gameID());
+            if (!games.contains(game)) {
+                games.add(game);
             }
         }
-        gameIDs.retainAll(providedIDs);
+        games.retainAll(response.games());
         return response;
     }
-    protected ArrayList<Integer> getGameIDs() throws ResponseException {
-        refreshGameIDs();
-        return gameIDs;
+    protected GameData getGameAtIndex(int index) throws ResponseException {
+        refreshGames();
+        return games.get(index);
     }
 }

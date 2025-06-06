@@ -59,7 +59,11 @@ public class PreloginClient implements Client {
                 """;
     }
 
-    public int changeClientLayer() {
+    public int getChangeClientLayer() {
         return changeClientLayer;
+    }
+
+    public void resetChangeClientLayer() {
+        changeClientLayer = 0;
     }
 }

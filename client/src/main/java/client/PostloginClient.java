@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.CreateGameResult;
 import model.GameData;
@@ -9,6 +10,8 @@ import java.util.*;
 public class PostloginClient implements Client {
     private int changeClientLayer = 0;
     private final ServerFacade server;
+    private int targetGameIndex;
+    private ChessGame.TeamColor targetGameColor;
 
     public PostloginClient(ServerFacade server) {
         this.server = server;
@@ -67,22 +70,26 @@ public class PostloginClient implements Client {
 
     private String join(String[] parameters) throws ResponseException {
         if (parameters.length != 2) {
-            return "Please provide 2 parameters: game ID and color";
+            return "Please provide 2 parameters: game number and color";
         }
         else {
             server.joinGame(Integer.parseInt(parameters[0]), parameters[1]);
             changeClientLayer = 1;
+            targetGameIndex = Integer.parseInt(parameters[0]);
+            targetGameColor = ChessGame.TeamColor.valueOf(parameters[1].toUpperCase());
             return "Successfully joined game!";
         }
     }
 
     private String observe(String[] parameters) {
         if (parameters.length != 1) {
-            return "Please provide 1 parameter: game ID";
+            return "Please provide 1 parameter: game number";
         }
         else {
             // don't think the program actually supports observing games yet
             changeClientLayer = 1;
+            targetGameIndex = Integer.parseInt(parameters[0]);
+            targetGameColor = ChessGame.TeamColor.WHITE;
             return "Observing game!";
         }
     }
@@ -91,15 +98,27 @@ public class PostloginClient implements Client {
         return """
                 create <NAME> - create a new game
                 list - list all games
-                join <ID> [WHITE|BLACK] - join a game as color
-                observe <ID> - observe a game
+                join <NUMBER> [WHITE|BLACK] - join a game as color
+                observe <NUMBER> - observe a game
                 logout - log out of current user
                 quit - quit the program
                 help - display this message
                """;
     }
 
-    public int changeClientLayer() {
+    public int getChangeClientLayer() {
         return changeClientLayer;
+    }
+
+    public void resetChangeClientLayer() {
+        changeClientLayer = 0;
+    }
+
+    public int getTargetGameIndex() {
+        return targetGameIndex;
+    }
+
+    public ChessGame.TeamColor getTargetGameColor() {
+        return targetGameColor;
     }
 }

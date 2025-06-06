@@ -60,7 +60,7 @@ public class GameService {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
-                if (joinGameRequest.playerColor().equals("WHITE")) {
+                if (joinGameRequest.playerColor().equalsIgnoreCase("WHITE")) {
                     if (gameDAO.getGameByID(joinGameRequest.gameID()).whiteUsername() != null) {
                         throw new ResponseException(403, "Error: Already taken");
                     }
@@ -72,7 +72,7 @@ public class GameService {
                         gameDAO.updateGame(updated);
                     }
                 }
-                else if (joinGameRequest.playerColor().equals("BLACK")) {
+                else if (joinGameRequest.playerColor().equalsIgnoreCase("BLACK")) {
                     if (gameDAO.getGameByID(joinGameRequest.gameID()).blackUsername() != null) {
                         throw new ResponseException(403, "Error: Already taken");
                     }
