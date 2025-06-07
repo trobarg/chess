@@ -1,12 +1,13 @@
 package ui;
 
 import client.*;
+import websocket.messages.Notification;
 
 import java.util.Scanner;
 
 import static java.lang.System.out;
 
-public class REPL {
+public class REPL implements NotificationHandler {
     private Client client;
     private PreloginClient preloginClient;
     private PostloginClient postloginClient;
@@ -70,5 +71,10 @@ public class REPL {
                 case null, default -> throw new Exception("Invalid client layer change");
             }
         }
+    }
+
+    @Override
+    public void notify(Notification notification) {
+        out.println(notification.getMessage());
     }
 }

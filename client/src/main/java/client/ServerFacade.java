@@ -8,12 +8,14 @@ import java.util.*;
 public class ServerFacade {
     private final String serverURL;
     private final HTTPCommunicator httpCommunicator;
+    //private final WebsocketCommunicator websocketCommunicator;
     private final ArrayList<GameData> games = new ArrayList<>();
     private String authToken;
 
     public ServerFacade(String serverURL) {
         this.serverURL = serverURL;
         this.httpCommunicator = new HTTPCommunicator(serverURL, this);
+
     }
 
     public AuthData register(String username, String password, String email) throws ResponseException {
