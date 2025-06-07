@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class WebsocketCommunicator extends Endpoint {
+public class WebSocketCommunicator extends Endpoint {
     Session session;
     NotificationHandler notificationHandler;
 
-    public WebsocketCommunicator (String url, NotificationHandler notificationHandler) throws ResponseException {
+    public WebSocketCommunicator(String url, NotificationHandler notificationHandler) throws ResponseException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");

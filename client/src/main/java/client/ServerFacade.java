@@ -8,7 +8,7 @@ import java.util.*;
 public class ServerFacade {
     private final String serverURL;
     private final HTTPCommunicator httpCommunicator;
-    //private final WebsocketCommunicator websocketCommunicator;
+    //private final WebSocketCommunicator websocketCommunicator;
     private final ArrayList<GameData> games = new ArrayList<>();
     private String authToken;
 
