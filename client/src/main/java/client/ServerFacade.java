@@ -1,21 +1,31 @@
 package client;
 
+import chess.*;
+import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
+import websocket.commands.Leave;
+import websocket.commands.MakeMove;
+import websocket.commands.Resign;
+import websocket.commands.UserGameCommand;
 
 import java.util.*;
 
 public class ServerFacade {
     private final String serverURL;
     private final HTTPCommunicator httpCommunicator;
-    //private final WebSocketCommunicator websocketCommunicator;
+    //private final WebSocketCommunicator webSocketCommunicator;
     private final ArrayList<GameData> games = new ArrayList<>();
     private String authToken;
+    /*
+    Perhaps by changing the listing logic to not adhere to whatever order the server returns,
+    there's a way for a running client to keep track of a game number - ID association
+    */
 
     public ServerFacade(String serverURL) {
         this.serverURL = serverURL;
         this.httpCommunicator = new HTTPCommunicator(serverURL, this);
-
+        //this.webSocketCommunicator = new WebSocketCommunicator(serverURL, notificationHandler);
     }
 
     public AuthData register(String username, String password, String email) throws ResponseException {
@@ -44,7 +54,7 @@ public class ServerFacade {
     public CreateGameResult createGame(String gameName) throws ResponseException {
         CreateGameRequest createGameRequest = new CreateGameRequest(null, gameName); //this could be hard to deserialize correctly
         CreateGameResult createGameResult = httpCommunicator.makeRequest("POST", "/game", createGameRequest, authToken, CreateGameResult.class);
-        refreshGames();
+        refreshGames(); //probably don't need to refresh here
         return createGameResult;
     }
 
@@ -52,6 +62,23 @@ public class ServerFacade {
         refreshGames();
         JoinGameRequest joinGameRequest = new JoinGameRequest(null, getGameDataByNumber(gameNumber).gameID(), color);
         httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, authToken, null);
+    }
+
+    public void sendCommand(UserGameCommand command) {
+        String message = new Gson().toJson(command);
+        //webSocketCommunicator.sendMessage(message);
+    }
+
+    public void makeMove(int gameID, ChessMove move) {
+        sendCommand(new MakeMove(authToken, gameID, move));
+    }
+
+    public void leave(int gameID) { //these are actual gameIDs, not numbers
+        sendCommand(new Leave(authToken, gameID));
+    }
+
+    public void resign(int gameID) {
+        sendCommand(new Resign(authToken, gameID));
     }
 
     private GamesList refreshGames() throws ResponseException {
