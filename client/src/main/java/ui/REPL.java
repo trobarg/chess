@@ -1,6 +1,7 @@
 package ui;
 
 import client.*;
+import exception.ResponseException;
 import websocket.messages.Notification;
 
 import java.util.Scanner;
@@ -14,8 +15,8 @@ public class REPL implements NotificationHandler {
     private GameplayClient gameplayClient;
     private final ServerFacade server;
 
-    public REPL(ServerFacade server) {
-        this.server = server;
+    public REPL(String urlExtension) {
+        this.server = new ServerFacade(urlExtension, this);
         preloginClient = new PreloginClient(server);
         postloginClient = new PostloginClient(server);
         client = preloginClient;

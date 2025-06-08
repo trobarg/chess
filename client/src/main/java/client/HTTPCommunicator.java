@@ -9,17 +9,17 @@ import java.net.*;
 
 
 public class HTTPCommunicator {
-    private final String serverURL;
-    private final ServerFacade server;
+    private final String url;
+    private final ServerFacade server; //really thought this would be needed for some reason
 
-    public HTTPCommunicator(String url, ServerFacade server) {
-        this.serverURL = url; //needs https:// prefix?
+    public HTTPCommunicator(String urlExtension, ServerFacade server) {
+        this.url = "http://" + urlExtension;
         this.server = server;
     }
 
     public <T> T makeRequest(String method, String path, Object requestBody, String authToken, Class<T> responseClass) throws ResponseException {
         try {
-            URL url = (new URI(serverURL + path)).toURL();
+            URL url = (new URI(this.url + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);

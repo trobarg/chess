@@ -12,9 +12,10 @@ import websocket.commands.UserGameCommand;
 import java.util.*;
 
 public class ServerFacade {
-    private final String serverURL;
+    private final String urlExtension;
+    private final NotificationHandler notificationHandler;
     private final HTTPCommunicator httpCommunicator;
-    //private final WebSocketCommunicator webSocketCommunicator;
+    private final WebSocketCommunicator webSocketCommunicator;
     private final ArrayList<GameData> games = new ArrayList<>();
     private String authToken;
     /*
@@ -22,10 +23,11 @@ public class ServerFacade {
     there's a way for a running client to keep track of a game number - ID association
     */
 
-    public ServerFacade(String serverURL) {
-        this.serverURL = serverURL;
-        this.httpCommunicator = new HTTPCommunicator(serverURL, this);
-        //this.webSocketCommunicator = new WebSocketCommunicator(serverURL, notificationHandler);
+    public ServerFacade(String urlExtension, NotificationHandler notificationHandler) {
+        this.urlExtension = urlExtension;
+        this.notificationHandler = notificationHandler;
+        this.httpCommunicator = new HTTPCommunicator(urlExtension, this);
+        this.webSocketCommunicator = new WebSocketCommunicator(urlExtension, notificationHandler);//set up later?
     }
 
     public AuthData register(String username, String password, String email) throws ResponseException {
@@ -62,6 +64,10 @@ public class ServerFacade {
         refreshGames();
         JoinGameRequest joinGameRequest = new JoinGameRequest(null, getGameDataByNumber(gameNumber).gameID(), color);
         httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, authToken, null);
+    }
+
+    public void connectWebSocket() throws ResponseException {
+        webSocketCommunicator.establishConnection();
     }
 
     public void sendCommand(UserGameCommand command) {
