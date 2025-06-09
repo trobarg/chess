@@ -74,6 +74,10 @@ public class ServerFacade {
         webSocketCommunicator.sendMessage(message);
     }
 
+    public void connect(int gameID, ChessGame.TeamColor playerColor) {
+        sendCommand(new Connect(authToken, gameID, playerColor));
+    }
+
     public void makeMove(int gameID, ChessMove move) {
         sendCommand(new MakeMove(authToken, gameID, move));
     }

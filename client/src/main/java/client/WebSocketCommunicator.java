@@ -46,7 +46,7 @@ public class WebSocketCommunicator extends Endpoint {
 
     public void sendMessage(String message) {
         this.session.getAsyncRemote().sendText(message); //not getBasicRemote()
-        //Will some commands require closing the session?
+        //Will some commands require closing the session at the ServerFacade level?
     }
 
     @Override

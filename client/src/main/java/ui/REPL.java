@@ -9,7 +9,6 @@ import java.util.Scanner;
 import static java.lang.System.out;
 
 public class REPL implements ServerMessageHandler {
-    private BoardPrinter boardPrinter;
     private Client client;
     private PreloginClient preloginClient;
     private PostloginClient postloginClient;

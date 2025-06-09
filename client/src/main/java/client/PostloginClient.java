@@ -88,6 +88,7 @@ public class PostloginClient implements Client {
             changeClientLayer = 1;
             targetGameIndex = Integer.parseInt(parameters[0]);
             targetGameColor = ChessGame.TeamColor.valueOf(parameters[1].toUpperCase());
+            server.connect(server.getGameDataByNumber(targetGameIndex).gameID(), targetGameColor);
             return "Successfully joined game!";
         }
     }
@@ -107,6 +108,7 @@ public class PostloginClient implements Client {
             changeClientLayer = 1;
             targetGameIndex = Integer.parseInt(parameters[0]);
             targetGameColor = ChessGame.TeamColor.WHITE;
+            server.connect(server.getGameDataByNumber(targetGameIndex).gameID(), null);
             return "Observing game!";
         }
     }

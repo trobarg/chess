@@ -55,7 +55,6 @@ public class GameplayClient implements Client {
     }
 
     private String move(String[] parameters) {
-        //ChessPiece.PieceType promotionType;
         if (parameters.length > 3 || parameters.length < 2) {
             return "Please provide 2 or 3 parameters: start position, end position, and promotion type if applicable";
             //Shouldn't promotion be required when applicable?
