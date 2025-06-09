@@ -2,7 +2,8 @@ package client;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
-import websocket.messages.Notification;
+import websocket.messages.Error;//so the compiler doesn't complain about naming collision with java.lang.Error
+import websocket.messages.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -12,9 +13,9 @@ import java.net.URISyntaxException;
 public class WebSocketCommunicator extends Endpoint {
     private final String url;
     Session session;
-    NotificationHandler notificationHandler;
+    ServerMessageHandler notificationHandler;
 
-    public WebSocketCommunicator(String urlExtension, NotificationHandler notificationHandler) {
+    public WebSocketCommunicator(String urlExtension, ServerMessageHandler notificationHandler) {
         url = "ws://" + urlExtension;
         this.notificationHandler = notificationHandler;
     }
@@ -28,8 +29,12 @@ public class WebSocketCommunicator extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class); //not sure this will work for all message types
-                    notificationHandler.notify(notification);
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);//not sure this will deserialize correctly
+                    switch (serverMessage.getServerMessageType()) {
+                        case ERROR -> notificationHandler.notify(new Gson().fromJson(message, Error.class));
+                        case NOTIFICATION -> notificationHandler.notify(new Gson().fromJson(message, Notification.class));
+                        case LOAD_GAME -> notificationHandler.notify(new Gson().fromJson(message, LoadGame.class));
+                    }
                 }
             });
         }

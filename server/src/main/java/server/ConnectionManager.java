@@ -10,20 +10,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     private final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(String playerUsername, Session session) {
-        var connection = new Connection(playerUsername, session);
-        connections.put(playerUsername, connection);
+    public void add(String authToken, Session session) {
+        var connection = new Connection(authToken, session);
+        connections.put(authToken, connection);
     }
 
-    public void remove(String playerUsername) {
-        connections.remove(playerUsername);
+    public void remove(String authToken) {
+        connections.remove(authToken);
     }
 
-    public void broadcast(String excludePlayerUsername, Notification notification) throws IOException {
+    public void broadcast(String excludedAuthToken, Notification notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.getSession().isOpen()) {
-                if (!c.getPlayerUsername().equals(excludePlayerUsername)) {
+                if (!c.getPlayerUsername().equals(excludedAuthToken)) {
                     c.send(notification.toString());
                 }
             } else {

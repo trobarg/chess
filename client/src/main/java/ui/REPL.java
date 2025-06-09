@@ -1,14 +1,15 @@
 package ui;
 
 import client.*;
-import exception.ResponseException;
-import websocket.messages.Notification;
+import websocket.messages.Error;//so the compiler doesn't complain about naming collision with java.lang.Error
+import websocket.messages.*;
 
 import java.util.Scanner;
 
 import static java.lang.System.out;
 
-public class REPL implements NotificationHandler {
+public class REPL implements ServerMessageHandler {
+    private BoardPrinter boardPrinter;
     private Client client;
     private PreloginClient preloginClient;
     private PostloginClient postloginClient;
@@ -75,7 +76,15 @@ public class REPL implements NotificationHandler {
     }
 
     @Override
-    public void notify(Notification notification) {
-        out.println(notification.getMessage());
+    public void notify(ServerMessage serverMessage) {
+        if (serverMessage instanceof Error) {
+            out.println(((Error) serverMessage).getMessage());
+        }
+        else if (serverMessage instanceof Notification) {
+            out.println(((Notification) serverMessage).getMessage());
+        }
+        else if (serverMessage instanceof LoadGame) {
+            gameplayClient.updateAndPrintBoard(((LoadGame) serverMessage).getGame());
+        }
     }
 }

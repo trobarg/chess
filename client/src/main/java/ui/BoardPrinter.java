@@ -15,6 +15,10 @@ public class BoardPrinter {
         this.game = game;
     }
 
+    public void updateGame(ChessGame updatedGame) {
+        this.game = updatedGame;
+    }
+
     public void printBoard(ChessGame.TeamColor color, ChessPosition selectedPos) {
         StringBuilder output = new StringBuilder();
         output.append(SET_TEXT_BOLD);

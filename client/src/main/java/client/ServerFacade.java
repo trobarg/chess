@@ -4,26 +4,25 @@ import chess.*;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
-import websocket.commands.Leave;
-import websocket.commands.MakeMove;
-import websocket.commands.Resign;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
+//import com.google.common.collect.LinkedHashBiMap;
 
 import java.util.*;
 
 public class ServerFacade {
     private final String urlExtension;
-    private final NotificationHandler notificationHandler;
+    private final ServerMessageHandler notificationHandler;
     private final HTTPCommunicator httpCommunicator;
     private final WebSocketCommunicator webSocketCommunicator;
     private final ArrayList<GameData> games = new ArrayList<>();
+    //private BiMap <Integer, Integer> gameNumbersAndIDs = LinkedHashBiMap.create();
     private String authToken;
     /*
     Perhaps by changing the listing logic to not adhere to whatever order the server returns,
     there's a way for a running client to keep track of a game number - ID association
     */
 
-    public ServerFacade(String urlExtension, NotificationHandler notificationHandler) {
+    public ServerFacade(String urlExtension, ServerMessageHandler notificationHandler) {
         this.urlExtension = urlExtension;
         this.notificationHandler = notificationHandler;
         this.httpCommunicator = new HTTPCommunicator(urlExtension, this);
@@ -72,7 +71,7 @@ public class ServerFacade {
 
     public void sendCommand(UserGameCommand command) {
         String message = new Gson().toJson(command);
-        //webSocketCommunicator.sendMessage(message);
+        webSocketCommunicator.sendMessage(message);
     }
 
     public void makeMove(int gameID, ChessMove move) {

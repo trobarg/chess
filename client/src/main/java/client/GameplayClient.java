@@ -11,7 +11,6 @@ import static java.lang.System.out;
 
 public class GameplayClient implements Client {
     private int changeClientLayer = 0;
-    private final ChessGame game; //not strictly certain this is necessary
     private final int gameID;
     private final ChessGame.TeamColor teamColor;
     private final BoardPrinter boardPrinter;
@@ -20,10 +19,14 @@ public class GameplayClient implements Client {
     public GameplayClient(ServerFacade server, int gameNumber, ChessGame.TeamColor teamColor) throws ResponseException {
         this.server = server;
         this.teamColor = teamColor;
-        this.game = server.getGameDataByNumber(gameNumber).game();
         this.gameID = server.getGameDataByNumber(gameNumber).gameID();
-        boardPrinter = new BoardPrinter(this.game);
+        boardPrinter = new BoardPrinter(server.getGameDataByNumber(gameNumber).game());
         boardPrinter.printBoard(this.teamColor, null);
+    }
+
+    public void updateAndPrintBoard(ChessGame updatedGame) {
+        boardPrinter.updateGame(updatedGame);
+        boardPrinter.printBoard(teamColor, null);
     }
 
     public String eval(String input) {
