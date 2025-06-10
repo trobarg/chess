@@ -29,7 +29,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.webSocket("/connect", WebSocketHandler.class);
+        Spark.webSocket("/ws", webSocketHandler);
 
         Spark.delete("/db", clearHandler::clearApplication);
         Spark.post("/user", userHandler::register);

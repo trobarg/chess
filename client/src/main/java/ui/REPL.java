@@ -1,6 +1,7 @@
 package ui;
 
 import client.*;
+import exception.ResponseException;
 import websocket.messages.Error;//so the compiler doesn't complain about naming collision with java.lang.Error
 import websocket.messages.*;
 
@@ -83,7 +84,7 @@ public class REPL implements ServerMessageHandler {
             out.println(((Notification) serverMessage).getMessage());
         }
         else if (serverMessage instanceof LoadGame) {
-            gameplayClient.updateAndPrintBoard(((LoadGame) serverMessage).getGame());
+            gameplayClient.updateAndPrintBoard(((LoadGame) serverMessage).getGame());//would be problematic if not instantiated
         }
     }
 }

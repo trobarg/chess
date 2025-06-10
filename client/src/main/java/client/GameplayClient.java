@@ -20,8 +20,8 @@ public class GameplayClient implements Client {
         this.server = server;
         this.teamColor = teamColor;
         this.gameID = server.getGameDataByNumber(gameNumber).gameID();
-        boardPrinter = new BoardPrinter(server.getGameDataByNumber(gameNumber).game());
-        boardPrinter.printBoard(this.teamColor, null);
+        boardPrinter = new BoardPrinter(server.getGameDataByNumber(gameNumber).game()); //game data should come from a LoadGame command?
+        boardPrinter.printBoard(this.teamColor, null); //shouldn't need this line after LoadGame messages are working
     }
 
     public void updateAndPrintBoard(ChessGame updatedGame) {
@@ -69,9 +69,15 @@ public class GameplayClient implements Client {
         else {
             ChessPosition from = new ChessPosition(parameters[0].charAt(1) - '0', parameters[0].charAt(0) - ('a'-1));
             ChessPosition to = new ChessPosition(parameters[1].charAt(1) - '0', parameters[1].charAt(0) - ('a'-1));
-            ChessPiece.PieceType promotionType = ChessPiece.PieceType.valueOf(parameters[2].toUpperCase());
-            server.makeMove(gameID, new ChessMove(from, to, promotionType));
-            return parameters[0] + " to " + parameters[1] + " " + parameters[2];
+            if (parameters.length == 3) {
+                ChessPiece.PieceType promotionType = ChessPiece.PieceType.valueOf(parameters[2].toUpperCase());
+                server.makeMove(gameID, new ChessMove(from, to, promotionType));
+                return parameters[0] + " to " + parameters[1] + " " + parameters[2];
+            }
+            else {
+                server.makeMove(gameID, new ChessMove(from, to, null));
+                return parameters[0] + " to " + parameters[1];
+            }
         }
     }
 
@@ -101,7 +107,7 @@ public class GameplayClient implements Client {
         }
     }
 
-    private String leave() {
+    private String leave() throws ResponseException {
         server.leave(gameID);
         changeClientLayer = -1;
         return "Successfully left game!";

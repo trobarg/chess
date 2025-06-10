@@ -26,7 +26,7 @@ public class ServerFacade {
         this.urlExtension = urlExtension;
         this.notificationHandler = notificationHandler;
         this.httpCommunicator = new HTTPCommunicator(urlExtension, this);
-        this.webSocketCommunicator = new WebSocketCommunicator(urlExtension, notificationHandler);//set up later?
+        this.webSocketCommunicator = new WebSocketCommunicator(urlExtension, notificationHandler);
     }
 
     public AuthData register(String username, String password, String email) throws ResponseException {
@@ -74,16 +74,18 @@ public class ServerFacade {
         webSocketCommunicator.sendMessage(message);
     }
 
-    public void connect(int gameID, ChessGame.TeamColor playerColor) {
-        sendCommand(new Connect(authToken, gameID, playerColor));
+    public void connect(int gameID) throws ResponseException {
+        connectWebSocket();
+        sendCommand(new Connect(authToken, gameID));
     }
 
     public void makeMove(int gameID, ChessMove move) {
         sendCommand(new MakeMove(authToken, gameID, move));
     }
 
-    public void leave(int gameID) { //these are actual gameIDs, not numbers
+    public void leave(int gameID) throws ResponseException {
         sendCommand(new Leave(authToken, gameID));
+        webSocketCommunicator.closeConnection();
     }
 
     public void resign(int gameID) {

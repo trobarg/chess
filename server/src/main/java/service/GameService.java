@@ -61,7 +61,7 @@ public class GameService {
             }
             else {
                 if (joinGameRequest.playerColor().equalsIgnoreCase("WHITE")) {
-                    if (gameDAO.getGameByID(joinGameRequest.gameID()).whiteUsername() != null) {
+                    if (gameDAO.getGameByID(joinGameRequest.gameID()).whiteUsername() != null) {//check for matching username
                         throw new ResponseException(403, "Error: Already taken");
                     }
                     else {
@@ -73,7 +73,7 @@ public class GameService {
                     }
                 }
                 else if (joinGameRequest.playerColor().equalsIgnoreCase("BLACK")) {
-                    if (gameDAO.getGameByID(joinGameRequest.gameID()).blackUsername() != null) {
+                    if (gameDAO.getGameByID(joinGameRequest.gameID()).blackUsername() != null) {//check for matching username
                         throw new ResponseException(403, "Error: Already taken");
                     }
                     else {

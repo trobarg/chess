@@ -16,13 +16,13 @@ public class WebSocketCommunicator extends Endpoint {
     ServerMessageHandler notificationHandler;
 
     public WebSocketCommunicator(String urlExtension, ServerMessageHandler notificationHandler) {
-        url = "ws://" + urlExtension;
+        url = "ws://" + urlExtension + "/ws";
         this.notificationHandler = notificationHandler;
     }
 
     public void establishConnection() throws ResponseException {
         try {
-            URI socketURI = new URI(url + "/ws");
+            URI socketURI = new URI(url);
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
@@ -39,7 +39,7 @@ public class WebSocketCommunicator extends Endpoint {
             });
         }
         catch (DeploymentException | IOException | URISyntaxException ex) {
-            throw new ResponseException(500, ex.getMessage());
+            throw new ResponseException(500, "Failed to connect WebSocket: " + ex.getMessage());
         }
 
     }
@@ -47,6 +47,17 @@ public class WebSocketCommunicator extends Endpoint {
     public void sendMessage(String message) {
         this.session.getAsyncRemote().sendText(message); //not getBasicRemote()
         //Will some commands require closing the session at the ServerFacade level?
+    }
+
+    public void closeConnection() throws ResponseException {
+        if (this.session != null && this.session.isOpen()) {
+            try {
+                this.session.close();
+            }
+            catch (IOException exception) {
+                throw new ResponseException(500, "Failed to close WebSocket: " + exception.getMessage());
+            }
+        }
     }
 
     @Override
