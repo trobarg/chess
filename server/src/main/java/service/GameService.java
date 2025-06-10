@@ -60,26 +60,24 @@ public class GameService {
                 throw new ResponseException(401, "Error: Unauthorized");
             }
             else {
+                GameData current = gameDAO.getGameByID(joinGameRequest.gameID());
+                String username = authDAO.getAuthByAuthToken(joinGameRequest.authToken()).username();
                 if (joinGameRequest.playerColor().equalsIgnoreCase("WHITE")) {
-                    if (gameDAO.getGameByID(joinGameRequest.gameID()).whiteUsername() != null) {//check for matching username
+                    if (current.whiteUsername() != null && !current.whiteUsername().equals(username)) {
                         throw new ResponseException(403, "Error: Already taken");
                     }
                     else {
-                        String playerUsername = authDAO.getAuthByAuthToken(joinGameRequest.authToken()).username();
-                        GameData current = gameDAO.getGameByID(joinGameRequest.gameID());
-                        GameData updated = new GameData(current.gameID(), playerUsername, current.blackUsername(),
+                        GameData updated = new GameData(current.gameID(), username, current.blackUsername(),
                                 current.gameName(), current.game());
                         gameDAO.updateGame(updated);
                     }
                 }
                 else if (joinGameRequest.playerColor().equalsIgnoreCase("BLACK")) {
-                    if (gameDAO.getGameByID(joinGameRequest.gameID()).blackUsername() != null) {//check for matching username
+                    if (current.blackUsername() != null && !current.blackUsername().equals(username)) {
                         throw new ResponseException(403, "Error: Already taken");
                     }
                     else {
-                        String playerUsername = authDAO.getAuthByAuthToken(joinGameRequest.authToken()).username();
-                        GameData current = gameDAO.getGameByID(joinGameRequest.gameID());
-                        GameData updated = new GameData(current.gameID(), current.whiteUsername(), playerUsername,
+                        GameData updated = new GameData(current.gameID(), current.whiteUsername(), username,
                                 current.gameName(), current.game());
                         gameDAO.updateGame(updated);
                     }

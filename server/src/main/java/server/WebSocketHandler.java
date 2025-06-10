@@ -1,20 +1,15 @@
 package server;
 
-import chess.ChessGame;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
+import dataaccess.*;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.*;
-import websocket.messages.Error;
-import websocket.messages.LoadGame;
-import websocket.messages.Notification;
+import websocket.messages.Error;//so the compiler doesn't complain about naming collision with java.lang.Error
+import websocket.messages.*;
 
 import java.io.IOException;
 
@@ -58,7 +53,6 @@ public class WebSocketHandler {
             }
             LoadGame loadGame = new LoadGame(gameData.game());
             sessionManager.send(session, loadGame);
-            //How to ensure that connected users get future updates?
         }
         catch (DataAccessException exception) {
             //could be bad query for AuthData or GameData
@@ -107,7 +101,7 @@ public class WebSocketHandler {
                             ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
                     ChessPosition start = makeMove.getMove().getStartPosition();
                     ChessPosition end = makeMove.getMove().getEndPosition();
-                    sessionManager.broadcast(session, new Notification(toChessNotation(start) + " to " + toChessNotation(end)), true);
+                    sessionManager.broadcast(session, new Notification(toChessNotation(start) + " to " + toChessNotation(end)));
                         if (game.isInCheckmate(opponentColor)) {
                             sessionManager.broadcast(session, new Notification("Checkmate! %s wins!".formatted(username)), true);
                         }
@@ -168,7 +162,7 @@ public class WebSocketHandler {
         }
     }
     private String toChessNotation(ChessPosition position) {
-        char columnLetter = (char) ('a' - position.getColumn() - 1);
+        char columnLetter = (char) ('h' - (position.getColumn()));
         return "" + columnLetter + position.getRow();
     }
 

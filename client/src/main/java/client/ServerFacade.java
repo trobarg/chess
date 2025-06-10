@@ -25,7 +25,7 @@ public class ServerFacade {
     public ServerFacade(String urlExtension, ServerMessageHandler notificationHandler) {
         this.urlExtension = urlExtension;
         this.notificationHandler = notificationHandler;
-        this.httpCommunicator = new HTTPCommunicator(urlExtension, this);
+        this.httpCommunicator = new HTTPCommunicator(urlExtension);
         this.webSocketCommunicator = new WebSocketCommunicator(urlExtension, notificationHandler);
     }
 
@@ -53,7 +53,7 @@ public class ServerFacade {
     }
 
     public CreateGameResult createGame(String gameName) throws ResponseException {
-        CreateGameRequest createGameRequest = new CreateGameRequest(null, gameName); //this could be hard to deserialize correctly
+        CreateGameRequest createGameRequest = new CreateGameRequest(null, gameName);
         CreateGameResult createGameResult = httpCommunicator.makeRequest("POST", "/game", createGameRequest, authToken, CreateGameResult.class);
         refreshGames(); //probably don't need to refresh here
         return createGameResult;
@@ -65,17 +65,13 @@ public class ServerFacade {
         httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, authToken, null);
     }
 
-    public void connectWebSocket() throws ResponseException {
-        webSocketCommunicator.establishConnection();
-    }
-
     public void sendCommand(UserGameCommand command) {
         String message = new Gson().toJson(command);
         webSocketCommunicator.sendMessage(message);
     }
 
     public void connect(int gameID) throws ResponseException {
-        connectWebSocket();
+        webSocketCommunicator.establishConnection();
         sendCommand(new Connect(authToken, gameID));
     }
 

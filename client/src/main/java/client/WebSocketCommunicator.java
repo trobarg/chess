@@ -29,7 +29,7 @@ public class WebSocketCommunicator extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);//not sure this will deserialize correctly
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                     switch (serverMessage.getServerMessageType()) {
                         case ERROR -> notificationHandler.notify(new Gson().fromJson(message, Error.class));
                         case NOTIFICATION -> notificationHandler.notify(new Gson().fromJson(message, Notification.class));
@@ -45,8 +45,7 @@ public class WebSocketCommunicator extends Endpoint {
     }
 
     public void sendMessage(String message) {
-        this.session.getAsyncRemote().sendText(message); //not getBasicRemote()
-        //Will some commands require closing the session at the ServerFacade level?
+        this.session.getAsyncRemote().sendText(message); //not getBasicRemote()?
     }
 
     public void closeConnection() throws ResponseException {

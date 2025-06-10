@@ -10,11 +10,9 @@ import java.net.*;
 
 public class HTTPCommunicator {
     private final String url;
-    private final ServerFacade server; //really thought this would be needed for some reason
 
-    public HTTPCommunicator(String urlExtension, ServerFacade server) {
+    public HTTPCommunicator(String urlExtension) {
         this.url = "http://" + urlExtension;
-        this.server = server;
     }
 
     public <T> T makeRequest(String method, String path, Object requestBody, String authToken, Class<T> responseClass) throws ResponseException {
