@@ -9,8 +9,8 @@ public class MemoryGameDAO implements GameDAO {
     private final HashMap<Integer, GameData> games = new HashMap<>();
 
     @Override
-    public GameData addGame(GameData game) {
-        return games.put(game.gameID(), game);
+    public GameData addGame(GameData gameData) {
+        return games.put(gameData.gameID(), gameData);
     }
 
     @Override
@@ -29,8 +29,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData updateGame(GameData game) { //functionally identical to adding a game?
-        return games.put(game.gameID(), game);
+    public GameData updateGame(GameData gameData) { //functionally identical to adding a game?
+        return games.put(gameData.gameID(), gameData);
     }
 
     @Override

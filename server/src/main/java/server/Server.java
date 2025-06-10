@@ -19,7 +19,7 @@ public class Server {
     private final UserHandler userHandler = new UserHandler(userService);
     private final GameHandler gameHandler = new GameHandler(gameService);
     private final ClearHandler clearHandler = new ClearHandler(clearService);
-    private final WebSocketHandler webSocketHandler = new WebSocketHandler(userDAO, gameDAO, authDAO);
+    private final WebSocketHandler webSocketHandler = new WebSocketHandler(gameDAO, authDAO);
 
     public Server() {
     }

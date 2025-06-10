@@ -92,9 +92,9 @@ public class ServerFacade {
 
     private GamesList refreshGames() throws ResponseException {
         GamesList response = httpCommunicator.makeRequest("GET", "/game", null, authToken, GamesList.class);
-        for (GameData game : response.games()) {
-            if (!games.contains(game)) {
-                games.add(game);
+        for (GameData gameData : response.games()) {
+            if (!games.contains(gameData)) {
+                games.add(gameData);
             }
         }
         games.retainAll(response.games());

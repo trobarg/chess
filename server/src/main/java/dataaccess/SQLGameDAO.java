@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
     public SQLGameDAO() {
@@ -33,16 +32,16 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData addGame(GameData game) throws DataAccessException {
+    public GameData addGame(GameData gameData) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
             try (var statement = connection.prepareStatement("INSERT INTO games " +
                     "(gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES(?, ?, ?, ?, ?)")) {
-                GameData previousGameData = getGameByID(game.gameID());
-                statement.setInt(1, game.gameID());
-                statement.setString(2, game.whiteUsername());
-                statement.setString(3, game.blackUsername());
-                statement.setString(4, game.gameName());
-                statement.setString(5, serializeGame(game.game()));
+                GameData previousGameData = getGameByID(gameData.gameID());
+                statement.setInt(1, gameData.gameID());
+                statement.setString(2, gameData.whiteUsername());
+                statement.setString(3, gameData.blackUsername());
+                statement.setString(4, gameData.gameName());
+                statement.setString(5, serializeGame(gameData.game()));
                 statement.executeUpdate();
                 return previousGameData;
             }
@@ -120,16 +119,16 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData updateGame(GameData game) throws DataAccessException {
+    public GameData updateGame(GameData gameData) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
             try (var statement = connection.prepareStatement("UPDATE games SET " +
                     "whiteUsername=?, blackUsername=?, gameName=?, chessGame=? WHERE gameID=?")) {
-                GameData previousGameData = getGameByID(game.gameID());
-                statement.setString(1, game.whiteUsername());
-                statement.setString(2, game.blackUsername());
-                statement.setString(3, game.gameName());
-                statement.setString(4, serializeGame(game.game()));
-                statement.setInt(5, game.gameID());
+                GameData previousGameData = getGameByID(gameData.gameID());
+                statement.setString(1, gameData.whiteUsername());
+                statement.setString(2, gameData.blackUsername());
+                statement.setString(3, gameData.gameName());
+                statement.setString(4, serializeGame(gameData.game()));
+                statement.setInt(5, gameData.gameID());
                 int rowsUpdated = statement.executeUpdate();
                 if (rowsUpdated == 0) {
                     throw new DataAccessException("Game requested to be updated not found in database.");

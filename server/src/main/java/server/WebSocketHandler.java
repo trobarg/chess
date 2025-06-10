@@ -1,12 +1,12 @@
 package server;
 
 import chess.ChessGame;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
-import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -17,18 +17,15 @@ import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
-    private final ConnectionManager connectionManager = new ConnectionManager();
-    private final UserDAO userDAO;
+    private final SessionManager sessionManager = new SessionManager();
     private final GameDAO gameDAO;
     private final AuthDAO authDAO; //feels like there should be a WebSocketService layer in between
 
 
-    public WebSocketHandler (UserDAO userDAO, GameDAO gameDAO, AuthDAO authDAO) {
-        this.userDAO = userDAO;
+    public WebSocketHandler (GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
         this.authDAO = authDAO;
     }
@@ -45,40 +42,134 @@ public class WebSocketHandler {
     }
     private void connect(Session session, Connect connect) throws IOException {
         try {
-            AuthData authData = authDAO.getAuthByAuthToken(connect.getAuthToken());
-            GameData game = gameDAO.getGameByID(connect.getGameID());
-            connectionManager.add(authData, session);
-            ChessGame.TeamColor connectColor = connect.getPlayerColor();
-            boolean usernameMatch;
-            if (connectColor == ChessGame.TeamColor.WHITE) {
-                usernameMatch = Objects.equals(game.whiteUsername(), authData.username());
+            String authToken = connect.getAuthToken();
+            String username = authDAO.getAuthByAuthToken(authToken).username();
+            int gameId = connect.getGameID();
+            GameData gameData = gameDAO.getGameByID(gameId);
+            sessionManager.add(session, gameId);
+            ChessGame.TeamColor connectColor = getPlayerColor(username, gameData);
+            if (connectColor != null) {
+                sessionManager.broadcast(session,
+                        new Notification("%s has joined the game as %s".formatted(username, connectColor.toString())));
             }
             else {
-                usernameMatch = Objects.equals(game.blackUsername(), authData.username());
+                sessionManager.broadcast(session,
+                        new Notification("%s has joined the game as an observer".formatted(username)));
             }
-            if (!usernameMatch) {
-                connectionManager.getConnection(authData.authToken()).send(new Error(
-                        "Error: attempted to connect as color not playing as"));
-            }
-            Notification notification = new Notification("%s has joined the game as %s".formatted(authData.username(), connectColor.toString()));
-            connectionManager.broadcast(authData.authToken(), notification);
-            LoadGame loadGame = new LoadGame(game.game());
-            connectionManager.getConnection(authData.authToken()).send(loadGame);
+            LoadGame loadGame = new LoadGame(gameData.game());
+            sessionManager.send(session, loadGame);
+            //How to ensure that connected users get future updates?
         }
         catch (DataAccessException exception) {
-
+            //could be bad query for AuthData or GameData
+            sessionManager.send(session, new Error(exception.getMessage()));
         }
     }
-    private void leave(Session session, Leave leave) {
-
-        //Username needed for the message, even if broadcast by AuthToken
+    private void leave(Session session, Leave leave) throws IOException {
+        try {
+            String authToken = leave.getAuthToken();
+            String username = authDAO.getAuthByAuthToken(authToken).username();
+            GameData gameData = gameDAO.getGameByID(leave.getGameID());
+            sessionManager.remove(session);
+            ChessGame.TeamColor leaveColor = getPlayerColor(username, gameData);
+            if (leaveColor != null) {
+                sessionManager.broadcast(session,
+                        new Notification("%s (playing %s) has left the game".formatted(username, leaveColor.toString())));
+            }
+            else {
+                sessionManager.broadcast(session,
+                        new Notification("%s (observer) has left the game".formatted(username)));
+            }
+        }
+        catch (DataAccessException exception) {
+            sessionManager.send(session, new Error(exception.getMessage()));
+        }
     }
-    private void makeMove(Session session, MakeMove makeMove) {
-
+    private void makeMove(Session session, MakeMove makeMove) throws IOException {
+        try {
+            String authToken = makeMove.getAuthToken();
+            String username = authDAO.getAuthByAuthToken(authToken).username();
+            GameData gameData = gameDAO.getGameByID(makeMove.getGameID());
+            ChessGame game = gameData.game();
+            ChessGame.TeamColor moveColor = getPlayerColor(username, gameData);
+            if (moveColor == null) {
+                sessionManager.send(session, new Error("You are observing this game"));
+                return;
+            }
+            if (game.getGameOver()) {
+                sessionManager.send(session, new Error("This game is over"));
+                return;
+            }
+            if (game.getTeamTurn().equals(moveColor)) {
+                try {
+                    game.makeMove(makeMove.getMove());
+                    ChessGame.TeamColor opponentColor = moveColor ==
+                            ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+                    ChessPosition start = makeMove.getMove().getStartPosition();
+                    ChessPosition end = makeMove.getMove().getEndPosition();
+                    sessionManager.broadcast(session, new Notification(toChessNotation(start) + " to " + toChessNotation(end)), true);
+                        if (game.isInCheckmate(opponentColor)) {
+                            sessionManager.broadcast(session, new Notification("Checkmate! %s wins!".formatted(username)), true);
+                        }
+                        else if (game.isInStalemate(opponentColor)) {
+                            sessionManager.broadcast(session, new Notification("Stalemate! It's a tie!"), true);
+                        }
+                        else if (game.isInCheck(opponentColor)) {
+                            sessionManager.broadcast(session, new Notification("%s is in check".formatted(opponentColor.toString())), true);
+                        }
+                        gameDAO.updateGame(gameData);
+                        sessionManager.broadcast(session, new LoadGame(game), true);
+                }
+                catch (InvalidMoveException exception) {
+                    sessionManager.send(session, new Error("Illegal move"));
+                }
+            }
+            else {
+                sessionManager.send(session, new Error("It is not your turn"));
+            }
+        }
+        catch (DataAccessException exception) {
+            sessionManager.send(session, new Error(exception.getMessage()));
+        }
     }
-    private void resign(Session session, Resign resign) {
-
+    private void resign(Session session, Resign resign) throws IOException {
+        try {
+            String authToken = resign.getAuthToken();
+            String username = authDAO.getAuthByAuthToken(authToken).username();
+            GameData gameData = gameDAO.getGameByID(resign.getGameID());
+            ChessGame game = gameData.game();
+            ChessGame.TeamColor resignColor = getPlayerColor(username, gameData);
+            if (resignColor == null) {
+                sessionManager.send(session, new Error("You are observing this game"));
+                return;
+            }
+            if (game.getGameOver()) {
+                sessionManager.send(session, new Error("This game is over"));
+                return;
+            }
+            String opponentUsername = resignColor == ChessGame.TeamColor.WHITE ? gameData.blackUsername() : gameData.whiteUsername();
+            game.setGameOver(true);
+            gameDAO.updateGame(gameData);
+            sessionManager.broadcast(session, new Notification("%s forfeits! %s wins!".formatted(username, opponentUsername)), true);
+        }
+        catch (DataAccessException exception) {
+            sessionManager.send(session, new Error(exception.getMessage()));
+        }
     }
-
+    private ChessGame.TeamColor getPlayerColor(String username, GameData game) {
+        if (username.equals(game.whiteUsername())) {
+            return ChessGame.TeamColor.WHITE;
+        }
+        else if (username.equals(game.blackUsername())) {
+            return ChessGame.TeamColor.BLACK;
+        }
+        else {
+            return null;
+        }
+    }
+    private String toChessNotation(ChessPosition position) {
+        char columnLetter = (char) ('a' - position.getColumn() - 1);
+        return "" + columnLetter + position.getRow();
+    }
 
 }

@@ -49,11 +49,11 @@ public class PostloginClient implements Client {
         }
         StringBuilder sb = new StringBuilder();
         int i = 1;
-        for (GameData game : gamesList) {
-            String whiteUser = game.whiteUsername() != null ? game.whiteUsername() : "open";
-            String blackUser = game.blackUsername() != null ? game.blackUsername() : "open";
+        for (GameData gameData : gamesList) {
+            String whiteUser = gameData.whiteUsername() != null ? gameData.whiteUsername() : "open";
+            String blackUser = gameData.blackUsername() != null ? gameData.blackUsername() : "open";
             sb.append(String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s%n",
-                    i, game.gameName(), whiteUser, blackUser));
+                    i, gameData.gameName(), whiteUser, blackUser));
             i++;
         }
         return sb.toString();

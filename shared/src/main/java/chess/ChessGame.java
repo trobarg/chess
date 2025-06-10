@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ChessGame {
     private final ChessBoard board = new ChessBoard();
     private TeamColor currentTeamTurn = TeamColor.WHITE;
+    private boolean gameOver = false;
     private boolean whiteCouldRightCastle = true;
     private boolean whiteCouldLeftCastle = true;
     private boolean blackCouldRightCastle = true;
@@ -107,6 +108,9 @@ public class ChessGame {
                     }
                     else {
                         setTeamTurn(TeamColor.WHITE);
+                    }
+                    if (isInCheckmate(currentTeamTurn) || isInStalemate(currentTeamTurn)) {
+                        gameOver = true;
                     }
                     break;
                 }
@@ -241,6 +245,13 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public boolean getGameOver() {
+        return gameOver;
+    }
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
     }
 
     @Override
