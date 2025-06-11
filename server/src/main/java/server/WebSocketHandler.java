@@ -144,8 +144,8 @@ public class WebSocketHandler {
                         else if (game.isInCheck(opponentColor)) {
                             sessionManager.broadcast(session, new Notification("%s is in check".formatted(opponentColor.toString())), true);
                         }
-                        gameDAO.updateGame(gameData);
                         sessionManager.broadcast(session, new LoadGame(game), true);
+                        gameDAO.updateGame(gameData);
                 }
                 catch (InvalidMoveException exception) {
                     sessionManager.send(session, new Error("Illegal move"));
