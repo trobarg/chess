@@ -54,7 +54,7 @@ public class GameplayClient implements Client {
         return ""; //adherence to the eval() pattern is really at its limits here
     }
 
-    private String move(String[] parameters) {
+    private String move(String[] parameters) throws ResponseException {
         if (parameters.length > 3 || parameters.length < 2) {
             return "Please provide 2 or 3 parameters: start position, end position, and promotion type if applicable";
             //Shouldn't promotion be required when applicable?
@@ -95,7 +95,7 @@ public class GameplayClient implements Client {
         }
     }
 
-    private String resign() { //This is breaking through the class's original responsibility
+    private String resign() throws ResponseException { //This is breaking through the class's original responsibility
         out.println("Are you sure you want to resign? Enter yes to confirm");
         String confirmation = new Scanner(System.in).nextLine();
         if (confirmation.equalsIgnoreCase("yes")) {
