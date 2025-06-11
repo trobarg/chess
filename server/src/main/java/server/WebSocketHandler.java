@@ -35,6 +35,7 @@ public class WebSocketHandler {
             case RESIGN -> resign(session, new Gson().fromJson(message, Resign.class));
         }
     }
+    //Should every method have a check for valid authToken and gameID?
     private void connect(Session session, Connect connect) throws IOException {
         try {
             String authToken = connect.getAuthToken();

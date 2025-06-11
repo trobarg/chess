@@ -14,7 +14,7 @@ public class ServerFacade {
     private final ServerMessageHandler notificationHandler;
     private final HTTPCommunicator httpCommunicator;
     private final WebSocketCommunicator webSocketCommunicator;
-    private final ArrayList<GameData> games = new ArrayList<>();
+    private final ArrayList<GameData> games = new ArrayList<>(); //I'm suspicious that inconsistencies between this and the database are the problem
     //private BiMap <Integer, Integer> gameNumbersAndIDs = LinkedHashBiMap.create();
     private String authToken;
     /*
