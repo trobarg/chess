@@ -6,6 +6,7 @@ import model.CreateGameResult;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
+import ui.REPL;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class ServerFacadeTests {
     public static void init() {
         server = new Server();
         var port = server.run(0);
-        serverFacade = new ServerFacade("http://localhost:" + port);
+        serverFacade = new ServerFacade("localhost:" + port, new REPL("localhost:" + port));//REPL creates its own ServerFacade
         System.out.println("Started test HTTP server on " + port);
     }
 

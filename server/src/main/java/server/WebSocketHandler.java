@@ -55,6 +55,16 @@ public class WebSocketHandler {
             if (connectColor != null) {
                 sessionManager.broadcast(session,
                         new Notification("%s has joined the game as %s".formatted(username, connectColor.toString())));
+                if (getColorUsername(connectColor, gameData) == null) { //http join should be taking care of this
+                    if (connectColor.equals(ChessGame.TeamColor.WHITE)) {
+                        gameDAO.updateGame(new GameData(gameData.gameID(), username, gameData.blackUsername(),
+                                gameData.gameName(), gameData.game()));
+                    }
+                    else {
+                        gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), username,
+                                gameData.gameName(), gameData.game()));
+                    }
+                }
             }
             else {
                 sessionManager.broadcast(session,
@@ -172,12 +182,23 @@ public class WebSocketHandler {
             sessionManager.send(session, new Error(exception.getMessage()));
         }
     }
-    private ChessGame.TeamColor getPlayerColor(String username, GameData game) {
-        if (username.equals(game.whiteUsername())) {
+    private ChessGame.TeamColor getPlayerColor(String username, GameData gameData) {
+        if (username.equals(gameData.whiteUsername())) {
             return ChessGame.TeamColor.WHITE;
         }
-        else if (username.equals(game.blackUsername())) {
+        else if (username.equals(gameData.blackUsername())) {
             return ChessGame.TeamColor.BLACK;
+        }
+        else {
+            return null;
+        }
+    }
+    private String getColorUsername (ChessGame.TeamColor color, GameData gameData) {
+        if (color.equals(ChessGame.TeamColor.WHITE)) {
+            return gameData.whiteUsername();
+        }
+        else if (color.equals(ChessGame.TeamColor.BLACK)) {
+            return gameData.blackUsername();
         }
         else {
             return null;
