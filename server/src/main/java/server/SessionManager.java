@@ -25,7 +25,7 @@ public class SessionManager {
     }
     public void broadcast(Session ownSession, ServerMessage message, boolean includeOwn) throws IOException {
         var removeList = new ArrayList<Session>();
-        int gameID = sessions.get(ownSession);
+        int gameID = sessions.get(ownSession); //null check?
         for (Session session : sessions.keySet()) {
             if (session.isOpen()) {
                 if (sessions.get(session).equals(gameID)) {

@@ -3,7 +3,7 @@ package server;
 import chess.*;
 import com.google.gson.Gson;
 import dataaccess.*;
-import model.GameData;
+import model.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -38,9 +38,18 @@ public class WebSocketHandler {
     private void connect(Session session, Connect connect) throws IOException {
         try {
             String authToken = connect.getAuthToken();
-            String username = authDAO.getAuthByAuthToken(authToken).username();
+            AuthData authData = authDAO.getAuthByAuthToken(authToken);
+            if (authData == null) {
+                sessionManager.send(session, new Error("Not authorized to connect"));
+                return;
+            }
+            String username = authData.username();
             int gameId = connect.getGameID();
             GameData gameData = gameDAO.getGameByID(gameId);
+            if (gameData == null) {
+                sessionManager.send(session, new Error("Invalid game ID provided"));
+                return;
+            }
             sessionManager.add(session, gameId);
             ChessGame.TeamColor connectColor = getPlayerColor(username, gameData);
             if (connectColor != null) {
@@ -64,16 +73,24 @@ public class WebSocketHandler {
             String authToken = leave.getAuthToken();
             String username = authDAO.getAuthByAuthToken(authToken).username();
             GameData gameData = gameDAO.getGameByID(leave.getGameID());
-            sessionManager.remove(session);
             ChessGame.TeamColor leaveColor = getPlayerColor(username, gameData);
             if (leaveColor != null) {
                 sessionManager.broadcast(session,
                         new Notification("%s (playing %s) has left the game".formatted(username, leaveColor.toString())));
+                if (leaveColor.equals(ChessGame.TeamColor.WHITE)) {
+                    gameDAO.updateGame(new GameData(gameData.gameID(), null, gameData.blackUsername(),
+                            gameData.gameName(), gameData.game()));
+                }
+                else {
+                    gameDAO.updateGame(new GameData(gameData.gameID(), gameData.whiteUsername(), null,
+                            gameData.gameName(), gameData.game()));
+                }
             }
             else {
                 sessionManager.broadcast(session,
                         new Notification("%s (observer) has left the game".formatted(username)));
             }
+            sessionManager.remove(session);
         }
         catch (DataAccessException exception) {
             sessionManager.send(session, new Error(exception.getMessage()));
@@ -82,7 +99,12 @@ public class WebSocketHandler {
     private void makeMove(Session session, MakeMove makeMove) throws IOException {
         try {
             String authToken = makeMove.getAuthToken();
-            String username = authDAO.getAuthByAuthToken(authToken).username();
+            AuthData authData = authDAO.getAuthByAuthToken(authToken);
+            if (authData == null) {
+                sessionManager.send(session, new Error("Not authorized to move"));
+                return;
+            }
+            String username = authData.username();
             GameData gameData = gameDAO.getGameByID(makeMove.getGameID());
             ChessGame game = gameData.game();
             ChessGame.TeamColor moveColor = getPlayerColor(username, gameData);
