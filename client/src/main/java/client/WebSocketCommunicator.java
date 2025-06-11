@@ -44,8 +44,8 @@ public class WebSocketCommunicator extends Endpoint {
 
     }
 
-    public void sendMessage(String message) {
-        this.session.getAsyncRemote().sendText(message); //not getBasicRemote()?
+    public void sendMessage(String message) throws IOException {
+        this.session.getBasicRemote().sendText(message); //not getBasicRemote()?
     }
 
     public void closeConnection() throws ResponseException {

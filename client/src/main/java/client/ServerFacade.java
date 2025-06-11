@@ -7,6 +7,7 @@ import model.*;
 import websocket.commands.*;
 //import com.google.common.collect.LinkedHashBiMap;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ServerFacade {
@@ -65,9 +66,14 @@ public class ServerFacade {
         httpCommunicator.makeRequest("PUT", "/game", joinGameRequest, authToken, null);
     }
 
-    public void sendCommand(UserGameCommand command) {
-        String message = new Gson().toJson(command);
-        webSocketCommunicator.sendMessage(message);
+    public void sendCommand(UserGameCommand command) throws ResponseException {
+        try {
+            String message = new Gson().toJson(command);
+            webSocketCommunicator.sendMessage(message);
+        }
+        catch (IOException exception) {
+            throw new ResponseException(500, exception.getMessage());
+        }
     }
 
     public void connect(int gameID) throws ResponseException {
@@ -75,7 +81,7 @@ public class ServerFacade {
         sendCommand(new Connect(authToken, gameID));
     }
 
-    public void makeMove(int gameID, ChessMove move) {
+    public void makeMove(int gameID, ChessMove move) throws ResponseException {
         sendCommand(new MakeMove(authToken, gameID, move));
     }
 
@@ -84,7 +90,7 @@ public class ServerFacade {
         webSocketCommunicator.closeConnection();
     }
 
-    public void resign(int gameID) {
+    public void resign(int gameID) throws ResponseException {
         sendCommand(new Resign(authToken, gameID));
     }
 
