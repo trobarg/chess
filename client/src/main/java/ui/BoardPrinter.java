@@ -39,7 +39,7 @@ public class BoardPrinter {
         }
 
         output.append(exteriorRow(reversed));
-        out.println(output);
+        out.print(output);
     }
 
     private String exteriorRow(boolean reversed) {
@@ -81,18 +81,21 @@ public class BoardPrinter {
             return SET_BG_COLOR_BLUE;
         }
         else if (highlightedSquares.contains(square)) {
-            return SET_BG_COLOR_DARK_GREEN;
+            return SET_BG_COLOR_YELLOW;
         }
         else if (row % 2 == 0) {
             if (column % 2 == 0) {
                 return SET_BG_COLOR_RED;
-            } else {
+            }
+            else {
                 return SET_BG_COLOR_LIGHT_GREY;
             }
-        } else {
+        }
+        else {
             if (column % 2 == 0) {
                 return SET_BG_COLOR_LIGHT_GREY;
-            } else {
+            }
+            else {
                 return SET_BG_COLOR_RED;
             }
         }
@@ -102,23 +105,32 @@ public class BoardPrinter {
         StringBuilder output = new StringBuilder();
         ChessPosition position = new ChessPosition(row, column);
         ChessPiece piece = game.getBoard().getPiece(position);
-
+        output.append(SET_TEXT_BOLD);
         if (piece != null) {
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 output.append(SET_TEXT_COLOR_WHITE);
-            } else {
+                switch (piece.getPieceType()) {
+                    case QUEEN -> output.append(WHITE_QUEEN);
+                    case KING -> output.append(WHITE_KING);
+                    case BISHOP -> output.append(WHITE_BISHOP);
+                    case KNIGHT -> output.append(WHITE_KNIGHT);
+                    case ROOK -> output.append(WHITE_ROOK);
+                    case PAWN -> output.append(WHITE_PAWN);
+                }
+            }
+            else {
                 output.append(SET_TEXT_COLOR_BLACK);
+                switch (piece.getPieceType()) {
+                    case QUEEN -> output.append(BLACK_QUEEN);
+                    case KING -> output.append(BLACK_KING);
+                    case BISHOP -> output.append(BLACK_BISHOP);
+                    case KNIGHT -> output.append(BLACK_KNIGHT);
+                    case ROOK -> output.append(BLACK_ROOK);
+                    case PAWN -> output.append(BLACK_PAWN);
+                }
             }
-
-            switch (piece.getPieceType()) {
-                case QUEEN -> output.append(" Q ");
-                case KING -> output.append(" K ");
-                case BISHOP -> output.append(" B ");
-                case KNIGHT -> output.append(" N ");
-                case ROOK -> output.append(" R ");
-                case PAWN -> output.append(" P ");
-            }
-        } else {
+        }
+        else {
             output.append("   ");
         }
 
